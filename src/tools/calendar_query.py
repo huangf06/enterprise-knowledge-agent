@@ -8,7 +8,8 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from src.tools.base import Tool, load_source, registry, validate_args
+from src.governance.pii_redact import redact
+from src.tools.base import Tool, ToolContext, load_source, registry, validate_args
 
 
 class CalendarQueryArgs(BaseModel):
@@ -41,7 +42,7 @@ def _conflicts(events: list[dict[str, Any]]) -> list[tuple[str, str]]:
     return pairs
 
 
-def _run(args: dict[str, Any]) -> str:
+def _run(args: dict[str, Any], ctx: ToolContext) -> str:
     parsed = validate_args(args, CalendarQueryArgs)
     events_all = _calendar_data()["events"]
     start_dt = _parse(parsed.start)
@@ -74,7 +75,7 @@ def _run(args: dict[str, Any]) -> str:
         lines.append(f"  ... {total - len(shown)} more not shown")
     for a, b in conflicts:
         lines.append(f"  CONFLICT: {a} overlaps {b}")
-    return "\n".join(lines)
+    return redact("\n".join(lines))
 
 
 TOOL = Tool(

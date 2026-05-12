@@ -18,5 +18,12 @@ def test_tool_registry_accessible_via_agent():
     from src.tools import registry
 
     schemas = registry().schemas()
-    assert len(schemas) == 3
-    assert {s["name"] for s in schemas} == {"slack_query", "jira_query", "calendar_query"}
+    assert len(schemas) == 6
+    assert {s["name"] for s in schemas} == {
+        "slack_query",
+        "jira_query",
+        "calendar_query",
+        "github_pr_review",
+        "gdocs_search",
+        "email_query",
+    }

@@ -18,9 +18,14 @@ def tool_execute_node(state: AgentState) -> dict[str, Any]:
 
     name = pending["name"]
     args = pending["args"]
+    ctx = {
+        "role": state.get("user_role", "IC"),
+        "user_name": state.get("user_name"),
+        **state.get("user_identity", {}),
+    }
     try:
         tool = registry().get(name)
-        result = tool.run(args)
+        result = tool.run(args, ctx)
         ok = True
     except Exception as exc:  # noqa: BLE001 — surface failure to the agent
         result = f"ERROR running {name}: {exc}"

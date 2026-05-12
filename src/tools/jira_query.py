@@ -7,7 +7,8 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from src.tools.base import Tool, load_source, registry, validate_args
+from src.governance.pii_redact import redact
+from src.tools.base import Tool, ToolContext, load_source, registry, validate_args
 
 PRIORITY_ORDER = ["Low", "Medium", "High", "Critical"]
 
@@ -37,7 +38,7 @@ def _meets_priority(ticket_priority: str, minimum: str | None) -> bool:
         return True
 
 
-def _run(args: dict[str, Any]) -> str:
+def _run(args: dict[str, Any], ctx: ToolContext) -> str:
     parsed = validate_args(args, JiraQueryArgs)
     tickets = _jira_data()["tickets"]
     results = []
@@ -69,7 +70,7 @@ def _run(args: dict[str, Any]) -> str:
         )
     if total > len(shown):
         lines.append(f"  ... {total - len(shown)} more not shown")
-    return "\n".join(lines)
+    return redact("\n".join(lines))
 
 
 TOOL = Tool(

@@ -1,0 +1,34 @@
+# Cross-source RBAC policies (design Section 3.3: policy engine pattern on synthetic IdP).
+# Three roles: IC, manager, HR. The "exec" virtual tier covers VP+ heads (manager_id == null).
+# Resources are identified by source and a string key (channel name, doc acl tag, etc.).
+# This file is loaded by src/governance/rbac.py.
+
+roles:
+  IC:
+    description: Individual contributor. Default scope is own work + team channels.
+    grants:
+      slack_channel:
+        deny: ["#leadership"]
+      gdocs_acl:
+        deny: ["hr", "leadership"]
+  manager:
+    description: Engineering or department manager. NOT a head/VP.
+    grants:
+      slack_channel:
+        deny: ["#leadership"]
+      gdocs_acl:
+        deny: ["hr"]
+  exec:
+    description: VP-level head (manager_id null in users_seed.yaml).
+    grants:
+      slack_channel:
+        deny: []
+      gdocs_acl:
+        deny: ["hr"]
+  HR:
+    description: HR department staff. May access HR-acl gdocs.
+    grants:
+      slack_channel:
+        deny: ["#leadership"]
+      gdocs_acl:
+        deny: []

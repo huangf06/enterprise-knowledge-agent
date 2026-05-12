@@ -23,7 +23,8 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 SYNTHETIC_DIR = REPO_ROOT / "data" / "synthetic"
 
 
-ToolFn = Callable[[dict[str, Any]], str]
+ToolContext = dict[str, Any]  # {role, user_id, slack_handle, jira_user, email, ...}
+ToolFn = Callable[[dict[str, Any], ToolContext], str]
 
 
 @dataclass(frozen=True)

@@ -8,7 +8,10 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from src.tools.base import Tool, load_source, registry, validate_args
+from src.governance.audit import audit_event
+from src.governance.pii_redact import redact
+from src.governance.rbac import check_resource
+from src.tools.base import Tool, ToolContext, load_source, registry, validate_args
 
 
 class SlackQueryArgs(BaseModel):
@@ -42,15 +45,25 @@ def _channel_visible(channel: dict[str, Any], handle: str, allow: list[str] | No
     return handle in channel["members"]
 
 
-def _run(args: dict[str, Any]) -> str:
+def _run(args: dict[str, Any], ctx: ToolContext) -> str:
     parsed = validate_args(args, SlackQueryArgs)
     data = _slack_data()
     since_dt = _parse_since(parsed.since)
-    visible_channels = {
-        c["name"]
-        for c in data["channels"]
-        if _channel_visible(c, parsed.user_handle, parsed.channels)
-    }
+    role = ctx.get("role", "IC")
+    denied_channels: list[str] = []
+    visible_channels: set[str] = set()
+    for c in data["channels"]:
+        if not _channel_visible(c, parsed.user_handle, parsed.channels):
+            continue
+        decision = check_resource("slack_channel", c["name"], role)
+        if not decision.allow:
+            denied_channels.append(c["name"])
+            audit_event(
+                "rbac.deny",
+                {"source": "slack", "resource": c["name"], "role": role, "reason": decision.reason},
+            )
+            continue
+        visible_channels.add(c["name"])
 
     lines: list[str] = []
     mention_count = 0
@@ -100,11 +113,14 @@ def _run(args: dict[str, Any]) -> str:
         lines = lines[: parsed.max_items]
         lines.append(f"... {truncated} more items not shown")
 
-    header = (
+    header_parts = [
         f"slack_query(user={parsed.user_handle}, since={parsed.since}): "
         f"{mention_count} mentions, {direct_count} DMs, {len(lines)} lines shown"
-    )
-    return header + "\n" + "\n".join(lines)
+    ]
+    if denied_channels:
+        header_parts.append(f"  RBAC denied: {sorted(denied_channels)} (role={role})")
+    body = redact("\n".join(lines))
+    return "\n".join(header_parts) + "\n" + body
 
 
 TOOL = Tool(
