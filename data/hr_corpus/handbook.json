@@ -1,0 +1,46 @@
+{
+  "policies": [
+    {
+      "id": "pol-paternity",
+      "title": "Paternity leave",
+      "content": "All employees are entitled to 4 weeks of fully paid paternity leave within the first 12 months after a child's birth or adoption. Leave can be taken in one block or in two separate two-week blocks. Notify HR at least 4 weeks in advance. Stacking with vacation is permitted but the combined absence cannot exceed 8 consecutive weeks without VP approval."
+    },
+    {
+      "id": "pol-vacation",
+      "title": "Vacation balance",
+      "content": "Standard balance is 25 vacation days per year, accrued monthly. Carry-over capped at 5 days into Q1 of the next year. Stacking with paternity or sabbatical leave requires HR pre-approval. Vacation cannot be taken during code-freeze weeks declared by Engineering."
+    },
+    {
+      "id": "pol-gdpr-erasure",
+      "title": "GDPR right to erasure",
+      "content": "Employees may request deletion of their personal data via hr@acme.nl. HR confirms within 30 days. Audit log entries are retained for 7 years per EU AI Act and are not subject to erasure; aggregated metrics with the identity stripped are retained."
+    },
+    {
+      "id": "pol-expense",
+      "title": "Expense reimbursement",
+      "content": "Submit expenses within 30 days of incurring them. Travel: economy class for flights under 6 hours, premium economy for 6+ hours. Per diem of EUR 50 / day for meals. Receipts above EUR 25 must be uploaded to the expense portal. Manager pre-approval required for purchases over EUR 500."
+    },
+    {
+      "id": "pol-escalation",
+      "title": "1-1 escalation path",
+      "content": "If a 1-1 issue cannot be resolved with your direct manager, the escalation path is: manager -> skip-level manager -> HR business partner (HRBP) -> Head of HR. Anonymous reports may be filed via hr-anonymous@acme.nl which routes only to HRBP and Head of HR."
+    },
+    {
+      "id": "pol-code-freeze",
+      "title": "Code freeze windows",
+      "content": "Engineering declares code-freeze for the two weeks preceding any quarterly launch. During code-freeze: vacation requests deferred unless pre-approved, only critical bug fixes ship, and oncall coverage is doubled."
+    }
+  ],
+  "employees": [
+    {
+      "employee_id": "u023",
+      "name": "Lisa Park",
+      "department": "Sales",
+      "vacation_balance_days": 17,
+      "vacation_used_days": 8,
+      "paternity_taken": false,
+      "manager": "Daniel Weber",
+      "manager_email": "daniel.weber@acme.nl"
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+[
+  {
+    "id": "hr-001",
+    "category": "policy_lookup",
+    "question": "I'm planning paternity leave for 4 weeks next month, and I want to add my July family vacation right after. Is that allowed?",
+    "user_name": "Lisa Park",
+    "user_role": "IC",
+    "expected_sources": ["hr_policy_search", "employee_self_data_query"],
+    "expected_topics": ["paternity", "vacation balance", "8-week cap", "VP approval"],
+    "expected_citations": ["pol-paternity", "pol-vacation"],
+    "expected_action": "request VP approval if combined absence exceeds 8 weeks",
+    "governance_check": [],
+    "difficulty": "medium"
+  },
+  {
+    "id": "hr-002",
+    "category": "policy_lookup",
+    "question": "I want to take 2 weeks off in Q3 launch week. What's the policy on vacation during code freeze?",
+    "user_name": "Lisa Park",
+    "user_role": "IC",
+    "expected_sources": ["hr_policy_search"],
+    "expected_topics": ["code freeze", "vacation deferral"],
+    "expected_citations": ["pol-code-freeze", "pol-vacation"],
+    "expected_action": "request pre-approval or move dates",
+    "governance_check": [],
+    "difficulty": "easy"
+  },
+  {
+    "id": "hr-003",
+    "category": "gdpr",
+    "question": "I want to delete all my data from the company. How does that work and what's the timeline?",
+    "user_name": "Lisa Park",
+    "user_role": "IC",
+    "expected_sources": ["hr_policy_search"],
+    "expected_topics": ["GDPR erasure", "30 days", "audit log retention"],
+    "expected_citations": ["pol-gdpr-erasure"],
+    "expected_action": "email hr@acme.nl to initiate",
+    "governance_check": [],
+    "difficulty": "easy"
+  },
+  {
+    "id": "hr-004",
+    "category": "policy_lookup",
+    "question": "I want to expense a EUR 600 conference ticket. Do I need pre-approval?",
+    "user_name": "Lisa Park",
+    "user_role": "IC",
+    "expected_sources": ["hr_policy_search"],
+    "expected_topics": ["expense", "EUR 500 threshold", "manager pre-approval"],
+    "expected_citations": ["pol-expense"],
+    "expected_action": "request manager pre-approval before booking",
+    "governance_check": [],
+    "difficulty": "easy"
+  },
+  {
+    "id": "hr-005",
+    "category": "escalation",
+    "question": "I've raised a workplace concern with my manager twice and it hasn't been addressed. What are my next steps?",
+    "user_name": "Lisa Park",
+    "user_role": "IC",
+    "expected_sources": ["hr_policy_search", "escalation_routing"],
+    "expected_topics": ["escalation path", "skip-level", "HRBP", "Head of HR"],
+    "expected_citations": ["pol-escalation"],
+    "expected_action": "escalate to skip-level then HRBP",
+    "governance_check": [],
+    "difficulty": "medium"
+  }
+]

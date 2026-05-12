@@ -16,6 +16,7 @@ import numpy as np
 
 from src.eval.datasets.hotpotqa import load_hotpotqa_subset
 from src.eval.datasets.ms_marco import load_msmarco_subset
+from src.llm.anthropic_client import messages_create
 from src.retrieval.embeddings import embed
 
 
@@ -50,12 +51,35 @@ def _em(pred: str, gold: str) -> float:
     return 1.0 if _normalize(pred) == _normalize(gold) else 0.0
 
 
-def score_hotpotqa(n: int = 100, top_k: int = 2) -> dict[str, float]:
-    """Retrieve top-k passages per question, generate an answer with the LLM, score EM/F1.
+_HOTPOT_ANSWER_PROMPT = """You are answering HotpotQA-style multi-hop questions.
 
-    For W4 we approximate the answer generation step by concatenating top-k passage
-    text and pulling the most salient noun phrase: this is enough to get a non-zero
-    F1 baseline without spinning a full QA chain.  W6 swaps this out for the agent.
+Use ONLY the passages below to answer. Give the SHORTEST possible answer — usually 1-5 words.
+Never explain. Never restate the question. Just the answer string.
+
+Passages:
+{passages}
+
+Question: {question}
+Answer:"""
+
+
+def _llm_short_answer(question: str, passages: list[str]) -> str:
+    prompt = _HOTPOT_ANSWER_PROMPT.format(
+        question=question,
+        passages="\n\n".join(f"({i + 1}) {p}" for i, p in enumerate(passages)),
+    )
+    resp = messages_create(messages=[{"role": "user", "content": prompt}], max_tokens=128)
+    return " ".join(b.text for b in resp.content if b.type == "text").strip()
+
+
+def score_hotpotqa(n: int = 100, top_k: int = 2, mode: str = "naive") -> dict[str, float]:
+    """Retrieve top-k passages per question, score EM/F1.
+
+    Modes:
+      "naive"      - cheap baseline: pick the retrieved sentence with the most
+                     question-token overlap. Documented v1 limitation.
+      "llm-answer" - one LLM call per question to extract a short answer from the
+                     top-k passages. Closer to published HotpotQA baselines.
     """
     items = load_hotpotqa_subset(n=n)
     em_sum = 0.0
@@ -72,18 +96,26 @@ def score_hotpotqa(n: int = 100, top_k: int = 2) -> dict[str, float]:
         q_vec = embed([question])[0]
         scores = np.dot(np.asarray(passage_vecs), np.asarray(q_vec))
         ranked = np.argsort(scores)[::-1][:top_k]
-        retrieved = " ".join(passages[int(i)][1] for i in ranked)
-        # Cheap answer extraction: pull the sentence containing the most question tokens.
-        sentences = re.split(r"(?<=[.!?])\s+", retrieved)
-        q_tokens = set(_tokens(question))
-        best, best_overlap = "", -1
-        for sent in sentences:
-            overlap = len(q_tokens & set(_tokens(sent)))
-            if overlap > best_overlap:
-                best, best_overlap = sent, overlap
+        retrieved_texts = [passages[int(i)][1] for i in ranked]
+        if mode == "llm-answer":
+            best = _llm_short_answer(question, retrieved_texts)
+        else:
+            retrieved = " ".join(retrieved_texts)
+            sentences = re.split(r"(?<=[.!?])\s+", retrieved)
+            q_tokens = set(_tokens(question))
+            best, best_overlap = "", -1
+            for sent in sentences:
+                overlap = len(q_tokens & set(_tokens(sent)))
+                if overlap > best_overlap:
+                    best, best_overlap = sent, overlap
         em_sum += _em(best, gold)
         f1_sum += _f1(best, gold)
-    return {"em": round(em_sum / len(items), 4), "f1": round(f1_sum / len(items), 4), "n": len(items)}
+    return {
+        "em": round(em_sum / len(items), 4),
+        "f1": round(f1_sum / len(items), 4),
+        "n": len(items),
+        "mode": mode,
+    }
 
 
 def score_msmarco(n: int = 50, top_k: int = 10) -> dict[str, float]:

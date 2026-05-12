@@ -1,0 +1,20 @@
+# Variant Dockerfile that launches the Gradio UI on port 7860.
+# Used by Hugging Face Space deployment.
+FROM python:3.11-slim
+
+WORKDIR /app
+
+RUN pip install --no-cache-dir uv==0.11.8
+
+COPY pyproject.toml uv.lock /app/
+RUN uv sync --no-dev --frozen
+
+COPY src /app/src
+COPY prompts /app/prompts
+COPY config /app/config
+COPY data /app/data
+COPY scripts /app/scripts
+
+EXPOSE 7860
+
+CMD ["uv", "run", "python", "-m", "src.ui.app"]

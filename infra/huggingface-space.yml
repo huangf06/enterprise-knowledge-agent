@@ -1,0 +1,17 @@
+# Hugging Face Space config (Docker SDK).
+# Push this repo to https://huggingface.co/spaces/<user>/enterprise-knowledge-agent
+# and set DEEPSEEK_API_KEY as a Secret in the Space settings.
+
+title: Enterprise Knowledge Agent
+emoji: 🧠
+colorFrom: indigo
+colorTo: purple
+sdk: docker
+app_port: 7860
+pinned: false
+license: apache-2.0
+short_description: Cross-source enterprise knowledge agent with policy engine and self-authored eval
+
+# Build instructions (Space picks up the Dockerfile in the repo root).
+# Override the default CMD to launch the Gradio UI instead of the FastAPI.
+# Override happens via the Space's Dockerfile or app.py at the repo root.

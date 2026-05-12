@@ -18,12 +18,20 @@ from src.eval.retrieval_sanity import score_hotpotqa, score_msmarco  # noqa: E40
 
 
 def main() -> int:
-    print("Scoring HotpotQA (n=100, BGE-M3 top-2, span extraction)...", flush=True)
-    hp = score_hotpotqa()
-    print(f"  HotpotQA: EM={hp['em']} F1={hp['f1']} (n={hp['n']})")
+    import argparse
 
-    print("Scoring MS Marco (n=50, BGE-M3 top-10)...", flush=True)
-    ms = score_msmarco()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--hotpotqa-mode", choices=["naive", "llm-answer"], default="naive")
+    parser.add_argument("--hotpotqa-n", type=int, default=100)
+    parser.add_argument("--msmarco-n", type=int, default=50)
+    args = parser.parse_args()
+
+    print(f"Scoring HotpotQA (n={args.hotpotqa_n}, BGE-M3 top-2, mode={args.hotpotqa_mode})...", flush=True)
+    hp = score_hotpotqa(n=args.hotpotqa_n, mode=args.hotpotqa_mode)
+    print(f"  HotpotQA: EM={hp['em']} F1={hp['f1']} (n={hp['n']}, mode={hp['mode']})")
+
+    print(f"Scoring MS Marco (n={args.msmarco_n}, BGE-M3 top-10)...", flush=True)
+    ms = score_msmarco(n=args.msmarco_n)
     print(f"  MS Marco: MRR@10={ms['mrr@10']} (n={ms['n']})")
 
     out = REPO_ROOT / "eval_results" / "retrieval_sanity.json"

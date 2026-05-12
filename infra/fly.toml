@@ -1,0 +1,46 @@
+# Fly.io deployment config for the Enterprise Knowledge Agent.
+# Apply with: fly launch --copy-config --no-deploy   (first time)
+#             fly deploy
+# Set the API key with: fly secrets set DEEPSEEK_API_KEY=sk-...
+
+app = "enterprise-knowledge-agent"
+primary_region = "ams"          # Amsterdam, NL — matches the project's NL audience
+kill_signal = "SIGINT"
+kill_timeout = "5s"
+
+[build]
+  dockerfile = "infra/Dockerfile"
+
+[env]
+  ANTHROPIC_BASE_URL = "https://api.deepseek.com/anthropic"
+  LLM_MODEL = "deepseek-v4-pro[1m]"
+  QDRANT_HOST = "qdrant.internal"
+  QDRANT_PORT = "6333"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+[[http_service.checks]]
+  type = "http"
+  interval = "30s"
+  timeout = "5s"
+  grace_period = "10s"
+  method = "get"
+  path = "/health"
+
+[processes]
+  app = "uv run uvicorn src.api.main:api --host 0.0.0.0 --port 8000"
+
+[[mounts]]
+  source = "eka_data"
+  destination = "/app/data/synthetic"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 2
+  memory_mb = 2048
