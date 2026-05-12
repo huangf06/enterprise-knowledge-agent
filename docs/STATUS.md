@@ -62,9 +62,11 @@
 | Production federation (Okta / SAML) | architecture pivot | v1.5 backlog explicit; design Section 3.3 |
 | Demo GIF capture | screen recording | once UI is recorded for the video, extract a 5-10s clip |
 
-## Auto-completing now (background)
+## Final auto-run numbers
 
-| Item | ETA |
+| Item | Result |
 |---|---|
-| Full 30-scenario eval | ~80 minutes from session start; README will auto-update on completion |
-| HotpotQA F1 with llm-answer mode | will run after the main eval finishes to avoid API contention |
+| Full 30-scenario eval | answer=0.71, complete=0.75, tools=0.96, gov=0.97, action=0.46 (eval-20260512-161340-rejudged.json) |
+| HotpotQA llm-answer | EM=0.28, F1=0.29 (lift from F1=0.077 naive baseline) |
+| MS Marco MRR@10 | 0.54 (PASS, beats published baseline) |
+| Adversarial | 10 / 10 blocked (100%) |

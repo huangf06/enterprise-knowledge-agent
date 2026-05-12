@@ -6,17 +6,27 @@ Production-grade open-source enterprise knowledge agent. Cross-source agentic re
 
 Self-authored cross-source briefing benchmark, 30 knowledge-worker scenarios. LLM-judge with single-author calibration (external review pending; see `docs/eval-methodology.md` for the closed-loop honesty chapter).
 
-| Metric | DeepSeek V4 Pro (1M ctx) |
-|---|---:|
-| Answer correctness (n=5 partial, last run) | 0.60 |
-| Completeness | 0.60 |
-| Tool selection quality | 0.60 |
-| Governance compliance | 0.60 |
-| Action recommend quality | 0.58 |
-| Avg tool calls per query | 4.0 |
-| Avg latency p50 (s) | 181 |
+| Metric | DeepSeek V4 Pro (1M ctx) | Notes |
+|---|---:|---|
+| Answer correctness | **0.71** | LLM-judge, n=30 |
+| Completeness | **0.75** | LLM-judge, n=30 |
+| Tool selection quality | **0.96** | LLM-judge, n=30 |
+| Governance compliance | **0.97** | LLM-judge, n=30 |
+| Action recommend quality | **0.46** | weakest area — agent gives general advice where scenarios expect a specific action |
+| Avg tool calls per query | 3.73 | hard cap is 6 |
+| Avg latency per query (s) | 169 | wallclock end-to-end |
 
-n=5 in the last leaderboard run; full 30-scenario run takes ~100 min wallclock and lives in `eval_results/runs/`. Two of those five scenarios hit a judge JSON-parse error since fixed (commit `c127fa5`); the other three were perfect across all metrics.
+Per-category breakdown (the agent is strongest on decision_support / cross_source_qa, weakest on conflict_resolution; tool selection is high across the board):
+
+| Category | n | Answer | Complete | Tools | Gov | Action |
+|---|---:|---:|---:|---:|---:|---:|
+| decision_support | 8 | 0.86 | 0.94 | 0.98 | 1.00 | 0.74 |
+| cross_source_qa | 6 | 0.87 | 0.70 | 0.88 | 1.00 | 0.10 |
+| morning_briefing | 8 | 0.64 | 0.66 | 1.00 | 0.88 | 0.43 |
+| multi_step | 3 | 0.47 | 0.67 | 1.00 | 1.00 | 0.67 |
+| conflict_resolution | 5 | 0.56 | 0.68 | 0.94 | 1.00 | 0.40 |
+
+Reproduce: `uv run python scripts/run_eval.py` (full 30-scenario run, ~100 min wallclock). Result lives in `eval_results/runs/eval-20260512-161340-rejudged.json`.
 
 **Adversarial governance regression: 10 / 10 blocked (100%)**. See `eval_results/adversarial.json` and `docs/w5_report.md`. Each of 10 cross-source attack vectors (RBAC bypass, role escalation, HR-doc leak, PII extraction, audit tamper, tool-result injection, cross-tenant switch, GDPR violation, markdown injection) is refused at the prompt-fence or RBAC layer before any data leaves the tool boundary.
 
@@ -26,8 +36,9 @@ Retrieval component sanity (third-party benchmarks; **not** the main eval anchor
 
 | Metric | Number | Target | Status |
 |---|---:|---:|---|
-| HotpotQA F1 (n=100, BGE-M3 top-2 + naive span) | 0.077 | 0.70 | Below target — answer extraction is intentionally naive in v1; W6 swaps it for the agent loop |
-| MS Marco MRR@10 (n=50, BGE-M3 cosine) | 0.5381 | 0.32 | PASS — beats the BGE-M3 published baseline |
+| HotpotQA EM (n=100, BGE-M3 top-2 + DeepSeek answer extraction) | 0.28 | — | 4x lift over naive span mode (0.0) |
+| HotpotQA F1 (same setup) | 0.29 | 0.70 | Below target; gap is the simple 2-passage retrieval + no QA fine-tune. Tunable via top-k + a stronger answer model |
+| MS Marco MRR@10 (n=50, BGE-M3 cosine, top-10) | 0.54 | 0.32 | **PASS** — beats the BGE-M3 published baseline |
 
 ## Demo
 
