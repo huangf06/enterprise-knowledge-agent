@@ -402,7 +402,7 @@ def _gen_github(users: list[User], rng: np.random.Generator, faker: Faker, days:
     repos = repos[:30]
 
     pr_idx = 0
-    target_prs = 100
+    target_prs = 99  # injection_patterns adds 1 q3-launch PR to reach exactly 100
     while pr_idx < target_prs:
         repo = repos[int(rng.integers(0, len(repos)))]
         pr_idx += 1
