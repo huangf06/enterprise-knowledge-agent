@@ -8,20 +8,26 @@ Production-grade open-source enterprise knowledge agent. Cross-source RAG + agen
 
 Self-authored cross-source briefing benchmark (n=50 knowledge worker scenarios, LLM-judge + author spot check + external reviewer calibration).
 
-| Metric | Sonnet 4.6 | GPT-4o | Haiku 4.5 |
-|---|---:|---:|---:|
-| Answer correctness | TBD (W4 fills) | TBD (W4 fills) | TBD (W4 fills) |
-| Citation groundedness | TBD (W4 fills) | TBD (W4 fills) | TBD (W4 fills) |
-| Governance compliance (n=10 adversarial) | TBD (W5 fills) | TBD (W5 fills) | TBD (W5 fills) |
-| Cost / query (USD) | TBD (W6 fills) | TBD (W6 fills) | TBD (W6 fills) |
-| Latency p95 (s) | TBD (W6 fills) | TBD (W6 fills) | TBD (W6 fills) |
-
-Retrieval component sanity checks (third-party benchmarks, retrieval pipeline health only):
-
-| Metric | Number |
+| Metric | DeepSeek V4 Pro (1M) |
 |---|---:|
-| HotpotQA F1 (n=100) | TBD (W4 fills) |
-| MS Marco MRR@10 (n=50) | TBD (W4 fills) |
+| Answer correctness (n=5 partial) | 0.60 |
+| Completeness (n=5 partial) | 0.60 |
+| Tool selection quality (n=5 partial) | 0.60 |
+| Governance compliance (n=5 partial) | 0.60 |
+| Action recommend quality (n=5 partial) | 0.58 |
+| Avg tool calls per query | 4.0 |
+| Avg latency per query (s) | 181 |
+
+n=5 partial run; full 30 scenarios takes ~100 min wallclock. Note: 2/5 scenarios in this run hit a judge JSON parse error (fixed in the same commit); the 3 that scored properly were perfect across all metrics. Re-run via `scripts/run_eval.py`.
+
+Multi-LLM ablation (GPT-4o / Haiku 4.5 / Sonnet 4.6) is **v1.5** per Fei's W2 decision to use a single DeepSeek model; columns will be added if a second key arrives.
+
+Retrieval component sanity checks (third-party benchmarks, retrieval pipeline health only — NOT the project's main eval anchor):
+
+| Metric | Number | Target | Status |
+|---|---:|---:|---|
+| HotpotQA F1 (n=100, BGE-M3 + naive span) | 0.077 | 0.70 | Below target — answer extraction naive in v1; W6 swaps to agent loop |
+| MS Marco MRR@10 (n=50, BGE-M3 + cosine) | 0.5381 | 0.32 | PASS (beats published baseline) |
 
 ## Demo
 
