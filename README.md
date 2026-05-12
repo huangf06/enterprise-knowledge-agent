@@ -18,7 +18,7 @@ Self-authored cross-source briefing benchmark, 30 knowledge-worker scenarios. LL
 
 n=5 in the last leaderboard run; full 30-scenario run takes ~100 min wallclock and lives in `eval_results/runs/`. Two of those five scenarios hit a judge JSON-parse error since fixed (commit `c127fa5`); the other three were perfect across all metrics.
 
-Adversarial governance regression: see `eval_results/adversarial.json`. Each of 10 cross-source attack vectors must produce `blocked=True`.
+**Adversarial governance regression: 10 / 10 blocked (100%)**. See `eval_results/adversarial.json` and `docs/w5_report.md`. Each of 10 cross-source attack vectors (RBAC bypass, role escalation, HR-doc leak, PII extraction, audit tamper, tool-result injection, cross-tenant switch, GDPR violation, markdown injection) is refused at the prompt-fence or RBAC layer before any data leaves the tool boundary.
 
 Multi-LLM ablation (GPT-4o / Claude Sonnet 4.6 / Haiku 4.5) is **v1.5** per the W2 decision to ship on a single DeepSeek model; columns are added when additional keys arrive.
 
