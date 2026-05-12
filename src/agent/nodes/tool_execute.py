@@ -5,6 +5,8 @@ from __future__ import annotations
 from typing import Any
 
 from src.agent.state import AgentState
+from src.governance.audit import audit_event
+from src.governance.injection_guard import frame_tool_result
 from src.tools import registry
 
 
@@ -25,12 +27,17 @@ def tool_execute_node(state: AgentState) -> dict[str, Any]:
     }
     try:
         tool = registry().get(name)
-        result = tool.run(args, ctx)
+        raw = tool.run(args, ctx)
+        result = frame_tool_result(name, raw)
         ok = True
     except Exception as exc:  # noqa: BLE001 — surface failure to the agent
         result = f"ERROR running {name}: {exc}"
         ok = False
 
+    audit_event(
+        "tool.execute",
+        {"tool": name, "user": state.get("user_name"), "role": state.get("user_role"), "ok": ok},
+    )
     record = {"tool": name, "args": args, "result": result}
     history.append(record)
     events.append({"type": "tool_execute", "tool": name, "args": args, "ok": ok})

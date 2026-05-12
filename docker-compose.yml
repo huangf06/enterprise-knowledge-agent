@@ -22,6 +22,26 @@ services:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
 
+  api:
+    build:
+      context: .
+      dockerfile: infra/Dockerfile
+    container_name: eka-api
+    depends_on:
+      - qdrant
+      - postgres
+    environment:
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
+      ANTHROPIC_BASE_URL: ${ANTHROPIC_BASE_URL:-https://api.deepseek.com/anthropic}
+      LLM_MODEL: ${LLM_MODEL:-deepseek-v4-pro[1m]}
+      QDRANT_HOST: qdrant
+      QDRANT_PORT: "6333"
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
 volumes:
   qdrant_storage:
   postgres_data:
