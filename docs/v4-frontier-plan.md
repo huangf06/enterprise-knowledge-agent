@@ -26,7 +26,7 @@ Plus 6 smaller hazards across the 4 frontier techniques, 8 missing Sprint 1 day-
 | # | Change | Source | Effort |
 |---|---|---|---|
 | **R1** | **Add A7 trace replay regression harness.** Capture real traces from F7 Sprint-1 deploy, serialize with gold answers, replay against every new graph version in CI. Catches per-category regressions invisible in headline metric. Generates A4 case study material organically. Keep A4 (failure case study) AND add trace replay — they compound. | Codex F | +6-8h |
-| **R2** | **Swap Self-Refine (Madaan 2023) → CRITIC (Gou 2024).** Same critique structure but the critique node is allowed to call tools to verify claims. Better fit for a tool-augmented 5-node graph than monolithic Self-Refine. Identical effort. | Codex B4 | 0h (cite swap, impl same) |
+| **R2** (v4.1 corrected) | **Keep Self-Refine (Madaan 2023) cite.** Critique node reads `(question, final_answer)` only per P6 — prose-only. CRITIC-style tool-calling critique (Gou 2024) is v1.5 next-step; requires graph restructure (+6-10h) to route critique → tool_select → tool_execute → critique, which doesn't fit the v4 budget. Reverting cite avoids the misnaming failure mode (citing CRITIC while implementing Self-Refine). | Codex B4 + r2 B1 | 0h |
 | **R3** | **Counterfactual entity-swap restricted to non-protagonist entities.** "EY contract" → "PwC contract", NOT "Sarah" → "Alice". Avoids regenerating synthetic data + avoids retesting injection guard on names it wasn't tuned for. | Codex B5, B6 | -2 to -4h (saves regeneration) |
 | **R4** | **Quick-eval at 3 tiers**: smoke (3 scenarios, <30s), fast (10 scenarios, <5min), full (30 scenarios). Mitigates eval-loop slowness as scope compounds. | Codex D | +1h |
 | **R5** | **Sprint 1 day-1 checklist expanded from 3 → 11 items.** See section "Sprint 1 day-1 checklist" below. | Codex E | +1-2h |
@@ -46,6 +46,10 @@ Plus 6 smaller hazards across the 4 frontier techniques, 8 missing Sprint 1 day-
 | **P9** | MoE: extend F1 structured outputs to critique node, not just judge (cross-vendor parser differences) | Codex C/MoE |
 | **P10** | Counterfactual noise-injection: explicit 2h budget for retrieval wrapper | Codex C/Counterfactual |
 | **P11** | Counterfactual doc-deletion: explicit 2-3h budget for ground-truth doc IDs in scenarios.json | Codex C/Counterfactual |
+| **P12** (v4.1 new) | **Trace replay (A7) CI runs ONLY structural metrics** (tool F1, citation algo verify, governance assertions). LLM-judge metrics run at sprint boundaries only, never in CI. Without this the OpenAI $100/month cap burns in <1 week. | r2 B4 |
+| **P13** (v4.1 new) | **Sprint 4 DSPy scope = `synthesize` node only.** If buffer remains, extend to `plan` node. Joint optimization across 5 nodes on 30 scenarios is the failure mode. Sprint description in plan must read "DSPy on synthesize node only first." | r2 B5 |
+| **P14** (v4.1 new) | **Full eval (30 scenarios) ONLY at sprint boundaries.** Fast tier (10 scenarios) daily during active sprint. CRITIC/Self-Refine adds 2x agent inference per query; full eval at Sprint 3 = ~2.5-3 hours, not 100 min. | r2 B2 |
+| **P15** (v4.1 new) | **DSPy ablation reports on BOTH judge regimes**: 2-judge consensus (Haiku + GPT-4o-mini, the training metric) AND 3-judge consensus (+ DeepSeek, the comparison metric used by every other ablation). One paragraph in DSPy ablation doc explaining why. Cheap fix vs re-running all ablations. | r2 B3 |
 
 ### Optional (doc-level only, no implementation)
 
@@ -80,10 +84,10 @@ Plus 6 smaller hazards across the 4 frontier techniques, 8 missing Sprint 1 day-
 
 ### Frontier layer (4 techniques, ~70h, slightly leaner)
 
-- Frontier #3 → now **CRITIC (Gou 2024)**: 10-12h. Same effort; critique node calls tools to verify.
+- Frontier #3 **Self-Refine (Madaan 2023)**: 10-12h. Critique node reads `(question, final_answer)` only, closed 4-question checklist per P5/P6. CRITIC tool-calling variant deferred v1.5.
 - Frontier #1 DSPy compiled prompts: 30h budget, week-9 day-2 gate; P1-P4 locked
 - Frontier #4 Multi-LLM MoE: 10-12h + P7-P9; +4h vendor outage fallback if shipping; total 14-16h
-- Frontier #7 Counterfactual robustness: 12-15h - 2-4h saved by R3, + 2h retrieval wrapper P10, + 2-3h doc-ID scenarios P11; net 14-16h
+- Frontier #7 Counterfactual robustness: 12-15h - 2-4h saved by R3, + 2h retrieval wrapper P10, + 2-3h doc-ID scenarios P11; net **12-18h** (v4.1: arithmetic correction; upper bound matters when total is tight)
 
 ### Production-engineering additions (~31h, +7h vs v3)
 
@@ -101,17 +105,31 @@ Plus 6 smaller hazards across the 4 frontier techniques, 8 missing Sprint 1 day-
 - README final + demo video (4h)
 - O1/O2/O3 doc-level paper citations (1h)
 
-## Total v4 budget
+## Total v4 budget (v4.1 corrected)
 
 | Block | Wall-clock | With Codex 0.8x |
 |---|---|---|
 | Foundation (F1-F8 + N2 baseline) | 49h | 39h |
-| Frontier (4 techniques, CRITIC + DSPy + MoE+outage + Counterfactual w/ wrappers) | 68-73h | 54-58h |
+| Frontier (4 techniques: Self-Refine + DSPy + MoE+outage + Counterfactual 12-18h) | 68-76h | 54-61h |
 | Production additions (A1-A7) | 31h | 25h |
 | Polish (blog + video + doc citations) | 13h | 10h |
 | Optional Frontier #6 PAIR capped | 10h | 8h |
-| **TOTAL (without PAIR)** | **161-166h** | **128-132h** |
-| **TOTAL (with PAIR)** | **171-176h** | **136-140h** |
+| **TOTAL (without PAIR)** | **161-169h** | **128-135h** |
+| **TOTAL (with PAIR)** | **171-179h** | **137-143h** |
+
+**Honesty note (per r2 review §C)**: Sprint 1 (32h / 2 weeks = 16h/week) and Sprint 2 (33h / 2 weeks = 16.5h/week) exceed the 8h/week burnout cap stated in the risk register. Two paths:
+- **(a)** accept 12-16h/week pace for sprints 1-2 only, then taper to 8h/week from Sprint 3 onward
+- **(b)** stretch sprints 1-2 to 4 weeks each (8 weeks total), pushing project completion week 18 not week 14
+
+Reviewer recommended (a). Track A collision in those 4 weeks → automatically falls back to (b).
+
+**Next-to-drop order if buffer overrun (after PAIR)**:
+1. PAIR (already optional)
+2. MoE vendor outage fallback (4h) — document risk in failure-modes.md instead
+3. F8 mkdocs site (4h) — use GitHub-rendered docs/ folder instead
+4. A2 reranker (4h) — keep BGE-M3 single-stage retrieval
+5. O1-O3 paper citations (1h) — minimal loss
+6. (stop) — any further cut hits load-bearing items; replan instead
 
 v3 was 143h/115h. v4 adds 18-23h for Codex's non-negotiables + recommendations.
 
@@ -137,16 +155,30 @@ The first 3 are blocking; 4-8 will silently fail in week 4-7 without day-1 verif
 
 | Sprint | Weeks | Work | Hours wall-clock |
 |---|---|---|---|
-| 1 | 1-2 | **Day-1 11-item checklist (3h)** + F7 deploy + F1 structured outputs + A1 retrieval ablation + A2 reranker + **N2 v1 baseline (2h)** | 25h |
-| 2 | 3-4 | F2 RAGAS + F3 multi-judge + F4 algo citation + F6 trajectory + **A5 3-tier quick-eval** + F8 mkdocs | 33h |
-| 3 | 5-6 | Frontier #3 **CRITIC** (was Self-Refine) + A3 semantic cache + **A7 trace replay scaffold** | 28h |
-| 4 | 7-9 | Frontier #1 DSPy (30h budgeted, **week-9 day-2 gate**, P1-P4 locked) | 30h |
-| 5 | 10-11 | Frontier #4 Multi-LLM MoE (with vendor outage fallback) + A4 failure case study (from trace replay data) | 22h |
-| 6 | 12-13 | Frontier #7 Counterfactual (R3 non-protagonist swap, P10-P11 wrappers + doc IDs) | 16h |
+| Sprint | Weeks | Work | Hours wall-clock |
+|---|---|---|---|
+| 1 | 1-2 | **Day-1 11-item checklist (3h)** + F7 deploy (15h) + F1 structured outputs (4h) + A1 retrieval ablation (4h) + A2 reranker (4h) + **N2 v1 baseline (2h)** | **32h** (v4.1 corrected; 16h/week) |
+| 2 | 3-4 | F2 RAGAS (8h) + F3 multi-judge (6h) + F4 algo citation (4h) + F6 trajectory (6h) + **A5 3-tier quick-eval (3h)** + F8 mkdocs (4h) | **31h** (15.5h/week) |
+| 3 | 5-6 | Frontier #3 Self-Refine (10-12h) + A3 semantic cache (8h) + **A7 trace replay scaffold (6-8h)** | 24-28h (12-14h/week) |
+| 4 | 7-9 | Frontier #1 DSPy **on `synthesize` node only first** per P13 (30h budgeted, **week-9 day-2 gate**, P1-P4 locked) | 30h (10h/week, 3 weeks) |
+| 5 | 10-11 | Frontier #4 Multi-LLM MoE (with vendor outage fallback) + A4 failure case study (from trace replay data) | 22h (11h/week) |
+| 6 | 12-13 | Frontier #7 Counterfactual (R3 non-protagonist swap, P10-P11 wrappers + doc IDs) | **12-18h** (v4.1 corrected) |
 | 7 | 14 | Signature blog + README final + demo video + O1/O2/O3 paper citations | 13h |
 | Buffer | 15-16 | Optional PAIR capped OR catch-up | 10h |
 
-**Total**: 177h wall-clock / 142h with Codex. Tight against 16-week timeline; expect to drop PAIR in buffer.
+**Total**: 174-184h wall-clock / 139-147h with Codex (v4.1 corrected upward from 177/142). Expect to drop PAIR + 1-2 items from next-to-drop list in buffer.
+
+## Honesty calibration policy (v4.1)
+
+(v3 + v4 items retained; v4.1 new additions marked.)
+
+1. No projected numbers in README header; all cells "TBD - see ablation"
+2. Every frontier technique ships with "with vs without" ablation table
+3. State attacker model strength explicitly if PAIR ships
+4. State cost/quality trade-off for MoE routing
+5. **(v4.1 NEW per r2 D)** **If A7 trace replay is dropped due to buffer overrun, then no DSPy ablation claim ships** — the per-category regression check is the only thing that makes DSPy numbers honest, and without it the headline number can hide a regression. A7 is not optional polish; it gates DSPy publishing.
+6. **(v4.1 NEW per P15)** DSPy ablation doc reports BOTH 2-judge (training metric, no DeepSeek) AND 3-judge (comparison metric used elsewhere) numbers, with one paragraph explaining the dual regime.
+7. Honest README sentence: "Built solo with Claude Code + Codex CLI pair-programming. Design decisions, architecture, and trade-offs are mine; code execution is paired. See `docs/v4-frontier-plan.md` for the active plan."
 
 ## Risk register (v4 with Codex additions)
 
@@ -173,11 +205,11 @@ Same as v3, plus:
 - **N1**: DSPy training metric excludes DeepSeek as judge (Sprint 4 lock)
 - **N2**: v1 cost/latency baseline run on Sprint 1 day-1 (2h, non-negotiable)
 - **R1**: Add A7 trace replay regression harness; keep A4 (case study)
-- **R2**: Cite CRITIC (Gou 2024) for the critique node, not Self-Refine
+- **R2** (v4.1 corrected): Cite Self-Refine (Madaan 2023), prose-only critique. CRITIC tool-calling variant deferred v1.5 (+6-10h graph restructure).
 - **R3**: Counterfactual entity-swap = non-protagonist entities only
 - **R4**: Quick-eval at 3 tiers
 - **R5**: Sprint 1 day-1 = 11 verification items
-- **P1-P11**: process improvements locked, no time cost
+- **P1-P15** (P12-P15 v4.1 new): process improvements locked, no time cost
 
 ## What to do next
 
@@ -191,4 +223,4 @@ Sprint 1 day-1 — the 11-item verification checklist + v1 baseline run + Fly.io
 4. Rewrite judge.py with `messages.parse` + Pydantic `JudgeScore` (F1 ~4h)
 5. A1 retrieval ablation (~4h) + A2 reranker (~4h)
 
-Sprint 1 target: 25h, 2 weeks at ~12h/week.
+Sprint 1 target: **32h over 2 weeks at 16h/week** (v4.1 corrected; exceeds 8h/week burnout cap — accept higher pace for Sprints 1-2 only, taper from Sprint 3).
