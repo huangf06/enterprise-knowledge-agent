@@ -1,0 +1,400 @@
+# 30-user seed (source of truth for cross-source entity consistency).
+# Departments: Engineering (12), Product (5), Design (4), Sales (5), HR (4).
+# Offices: Amsterdam (15), Berlin (10), Remote (5).
+# Derivation: slack_handle = jira_user = github_username = email local part.
+#             calendar_id = email. gdocs_author_id = "u-{user_id}".
+
+# --- Engineering (12) ---
+- user_id: u001
+  name: Marco van der Berg
+  department: Engineering
+  office: Amsterdam
+  role: VP Engineering
+  manager_id: null
+  slack_handle: marco.vandenberg
+  jira_user: marco.vandenberg
+  email: marco.vandenberg@acme.nl
+  github_username: marco.vandenberg
+  gdocs_author_id: u-u001
+  calendar_id: marco.vandenberg@acme.nl
+
+- user_id: u002
+  name: Sarah Chen
+  department: Engineering
+  office: Amsterdam
+  role: Engineering Manager
+  manager_id: u001
+  slack_handle: sarah.chen
+  jira_user: sarah.chen
+  email: sarah.chen@acme.nl
+  github_username: sarah.chen
+  gdocs_author_id: u-u002
+  calendar_id: sarah.chen@acme.nl
+
+- user_id: u003
+  name: Hiroshi Tanaka
+  department: Engineering
+  office: Berlin
+  role: Engineering Manager
+  manager_id: u001
+  slack_handle: hiroshi.tanaka
+  jira_user: hiroshi.tanaka
+  email: hiroshi.tanaka@acme.nl
+  github_username: hiroshi.tanaka
+  gdocs_author_id: u-u003
+  calendar_id: hiroshi.tanaka@acme.nl
+
+- user_id: u004
+  name: Anna Muller
+  department: Engineering
+  office: Berlin
+  role: Senior Software Engineer
+  manager_id: u003
+  slack_handle: anna.muller
+  jira_user: anna.muller
+  email: anna.muller@acme.nl
+  github_username: anna.muller
+  gdocs_author_id: u-u004
+  calendar_id: anna.muller@acme.nl
+
+- user_id: u005
+  name: Alice Rodriguez
+  department: Engineering
+  office: Amsterdam
+  role: Senior Software Engineer
+  manager_id: u002
+  slack_handle: alice.rodriguez
+  jira_user: alice.rodriguez
+  email: alice.rodriguez@acme.nl
+  github_username: alice.rodriguez
+  gdocs_author_id: u-u005
+  calendar_id: alice.rodriguez@acme.nl
+
+- user_id: u006
+  name: Tom Nguyen
+  department: Engineering
+  office: Amsterdam
+  role: Senior Software Engineer
+  manager_id: u002
+  slack_handle: tom.nguyen
+  jira_user: tom.nguyen
+  email: tom.nguyen@acme.nl
+  github_username: tom.nguyen
+  gdocs_author_id: u-u006
+  calendar_id: tom.nguyen@acme.nl
+
+- user_id: u007
+  name: Liam OBrien
+  department: Engineering
+  office: Berlin
+  role: Software Engineer
+  manager_id: u003
+  slack_handle: liam.obrien
+  jira_user: liam.obrien
+  email: liam.obrien@acme.nl
+  github_username: liam.obrien
+  gdocs_author_id: u-u007
+  calendar_id: liam.obrien@acme.nl
+
+- user_id: u008
+  name: Priya Patel
+  department: Engineering
+  office: Amsterdam
+  role: Senior Software Engineer
+  manager_id: u002
+  slack_handle: priya.patel
+  jira_user: priya.patel
+  email: priya.patel@acme.nl
+  github_username: priya.patel
+  gdocs_author_id: u-u008
+  calendar_id: priya.patel@acme.nl
+
+- user_id: u009
+  name: Diego Fernandez
+  department: Engineering
+  office: Remote
+  role: Software Engineer
+  manager_id: u002
+  slack_handle: diego.fernandez
+  jira_user: diego.fernandez
+  email: diego.fernandez@acme.nl
+  github_username: diego.fernandez
+  gdocs_author_id: u-u009
+  calendar_id: diego.fernandez@acme.nl
+
+- user_id: u010
+  name: Maya Goldberg
+  department: Engineering
+  office: Amsterdam
+  role: Software Engineer
+  manager_id: u002
+  slack_handle: maya.goldberg
+  jira_user: maya.goldberg
+  email: maya.goldberg@acme.nl
+  github_username: maya.goldberg
+  gdocs_author_id: u-u010
+  calendar_id: maya.goldberg@acme.nl
+
+- user_id: u011
+  name: Ahmed Hassan
+  department: Engineering
+  office: Remote
+  role: Site Reliability Engineer
+  manager_id: u003
+  slack_handle: ahmed.hassan
+  jira_user: ahmed.hassan
+  email: ahmed.hassan@acme.nl
+  github_username: ahmed.hassan
+  gdocs_author_id: u-u011
+  calendar_id: ahmed.hassan@acme.nl
+
+- user_id: u012
+  name: Yuki Sato
+  department: Engineering
+  office: Remote
+  role: Software Engineer
+  manager_id: u003
+  slack_handle: yuki.sato
+  jira_user: yuki.sato
+  email: yuki.sato@acme.nl
+  github_username: yuki.sato
+  gdocs_author_id: u-u012
+  calendar_id: yuki.sato@acme.nl
+
+# --- Product (5) ---
+- user_id: u013
+  name: Emma Bakker
+  department: Product
+  office: Amsterdam
+  role: Head of Product
+  manager_id: null
+  slack_handle: emma.bakker
+  jira_user: emma.bakker
+  email: emma.bakker@acme.nl
+  github_username: emma.bakker
+  gdocs_author_id: u-u013
+  calendar_id: emma.bakker@acme.nl
+
+- user_id: u014
+  name: Lukas Schmidt
+  department: Product
+  office: Amsterdam
+  role: Product Manager
+  manager_id: u013
+  slack_handle: lukas.schmidt
+  jira_user: lukas.schmidt
+  email: lukas.schmidt@acme.nl
+  github_username: lukas.schmidt
+  gdocs_author_id: u-u014
+  calendar_id: lukas.schmidt@acme.nl
+
+- user_id: u015
+  name: Sophie Dupont
+  department: Product
+  office: Amsterdam
+  role: Product Manager
+  manager_id: u013
+  slack_handle: sophie.dupont
+  jira_user: sophie.dupont
+  email: sophie.dupont@acme.nl
+  github_username: sophie.dupont
+  gdocs_author_id: u-u015
+  calendar_id: sophie.dupont@acme.nl
+
+- user_id: u016
+  name: Rajesh Kumar
+  department: Product
+  office: Berlin
+  role: Product Manager
+  manager_id: u013
+  slack_handle: rajesh.kumar
+  jira_user: rajesh.kumar
+  email: rajesh.kumar@acme.nl
+  github_username: rajesh.kumar
+  gdocs_author_id: u-u016
+  calendar_id: rajesh.kumar@acme.nl
+
+- user_id: u017
+  name: Mei Lin
+  department: Product
+  office: Remote
+  role: Product Manager
+  manager_id: u013
+  slack_handle: mei.lin
+  jira_user: mei.lin
+  email: mei.lin@acme.nl
+  github_username: mei.lin
+  gdocs_author_id: u-u017
+  calendar_id: mei.lin@acme.nl
+
+# --- Design (4) ---
+- user_id: u018
+  name: Olivia Janssen
+  department: Design
+  office: Amsterdam
+  role: Design Lead
+  manager_id: null
+  slack_handle: olivia.janssen
+  jira_user: olivia.janssen
+  email: olivia.janssen@acme.nl
+  github_username: olivia.janssen
+  gdocs_author_id: u-u018
+  calendar_id: olivia.janssen@acme.nl
+
+- user_id: u019
+  name: Noah de Vries
+  department: Design
+  office: Amsterdam
+  role: Senior Designer
+  manager_id: u018
+  slack_handle: noah.devries
+  jira_user: noah.devries
+  email: noah.devries@acme.nl
+  github_username: noah.devries
+  gdocs_author_id: u-u019
+  calendar_id: noah.devries@acme.nl
+
+- user_id: u020
+  name: Karim Bensaid
+  department: Design
+  office: Berlin
+  role: Designer
+  manager_id: u018
+  slack_handle: karim.bensaid
+  jira_user: karim.bensaid
+  email: karim.bensaid@acme.nl
+  github_username: karim.bensaid
+  gdocs_author_id: u-u020
+  calendar_id: karim.bensaid@acme.nl
+
+- user_id: u021
+  name: Helena Stojanovic
+  department: Design
+  office: Remote
+  role: Designer
+  manager_id: u018
+  slack_handle: helena.stojanovic
+  jira_user: helena.stojanovic
+  email: helena.stojanovic@acme.nl
+  github_username: helena.stojanovic
+  gdocs_author_id: u-u021
+  calendar_id: helena.stojanovic@acme.nl
+
+# --- Sales (5) ---
+- user_id: u022
+  name: Daniel Weber
+  department: Sales
+  office: Berlin
+  role: Head of Sales
+  manager_id: null
+  slack_handle: daniel.weber
+  jira_user: daniel.weber
+  email: daniel.weber@acme.nl
+  github_username: daniel.weber
+  gdocs_author_id: u-u022
+  calendar_id: daniel.weber@acme.nl
+
+- user_id: u023
+  name: Lisa Park
+  department: Sales
+  office: Amsterdam
+  role: Account Executive
+  manager_id: u022
+  slack_handle: lisa.park
+  jira_user: lisa.park
+  email: lisa.park@acme.nl
+  github_username: lisa.park
+  gdocs_author_id: u-u023
+  calendar_id: lisa.park@acme.nl
+
+- user_id: u024
+  name: James OConnor
+  department: Sales
+  office: Amsterdam
+  role: Account Executive
+  manager_id: u022
+  slack_handle: james.oconnor
+  jira_user: james.oconnor
+  email: james.oconnor@acme.nl
+  github_username: james.oconnor
+  gdocs_author_id: u-u024
+  calendar_id: james.oconnor@acme.nl
+
+- user_id: u025
+  name: Sven Olsen
+  department: Sales
+  office: Berlin
+  role: Account Executive
+  manager_id: u022
+  slack_handle: sven.olsen
+  jira_user: sven.olsen
+  email: sven.olsen@acme.nl
+  github_username: sven.olsen
+  gdocs_author_id: u-u025
+  calendar_id: sven.olsen@acme.nl
+
+- user_id: u026
+  name: Isabella Romano
+  department: Sales
+  office: Berlin
+  role: Sales Development Representative
+  manager_id: u022
+  slack_handle: isabella.romano
+  jira_user: isabella.romano
+  email: isabella.romano@acme.nl
+  github_username: isabella.romano
+  gdocs_author_id: u-u026
+  calendar_id: isabella.romano@acme.nl
+
+# --- HR (4) ---
+- user_id: u027
+  name: Sofia Almeida
+  department: HR
+  office: Amsterdam
+  role: Head of HR
+  manager_id: null
+  slack_handle: sofia.almeida
+  jira_user: sofia.almeida
+  email: sofia.almeida@acme.nl
+  github_username: sofia.almeida
+  gdocs_author_id: u-u027
+  calendar_id: sofia.almeida@acme.nl
+
+- user_id: u028
+  name: Jane van Dijk
+  department: HR
+  office: Amsterdam
+  role: HR Specialist
+  manager_id: u027
+  slack_handle: jane.vandijk
+  jira_user: jane.vandijk
+  email: jane.vandijk@acme.nl
+  github_username: jane.vandijk
+  gdocs_author_id: u-u028
+  calendar_id: jane.vandijk@acme.nl
+
+- user_id: u029
+  name: Mateusz Kowalski
+  department: HR
+  office: Berlin
+  role: HR Specialist
+  manager_id: u027
+  slack_handle: mateusz.kowalski
+  jira_user: mateusz.kowalski
+  email: mateusz.kowalski@acme.nl
+  github_username: mateusz.kowalski
+  gdocs_author_id: u-u029
+  calendar_id: mateusz.kowalski@acme.nl
+
+- user_id: u030
+  name: Aiyana Singh
+  department: HR
+  office: Berlin
+  role: HR Specialist
+  manager_id: u027
+  slack_handle: aiyana.singh
+  jira_user: aiyana.singh
+  email: aiyana.singh@acme.nl
+  github_username: aiyana.singh
+  gdocs_author_id: u-u030
+  calendar_id: aiyana.singh@acme.nl
