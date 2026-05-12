@@ -403,12 +403,16 @@ def _gen_github(users: list[User], rng: np.random.Generator, faker: Faker, days:
 
     pr_idx = 0
     target_prs = 99  # injection_patterns adds 1 q3-launch PR to reach exactly 100
+    non_eng = [u for u in users if u.department != "Engineering"]
     while pr_idx < target_prs:
         repo = repos[int(rng.integers(0, len(repos)))]
         pr_idx += 1
-        author = eng[int(rng.integers(0, len(eng)))].github_username
+        is_open_repo = any(tag in repo["name"] for tag in ("docs", "data"))
+        author_pool = users if is_open_repo else eng
+        author = author_pool[int(rng.integers(0, len(author_pool)))].github_username
         reviewer_count = int(rng.integers(1, 4))
-        reviewer_pool = [u.github_username for u in eng if u.github_username != author]
+        reviewer_candidates = author_pool
+        reviewer_pool = [u.github_username for u in reviewer_candidates if u.github_username != author]
         reviewer_ids = rng.choice(len(reviewer_pool), size=reviewer_count, replace=False)
         reviewers = sorted({reviewer_pool[int(i)] for i in reviewer_ids})
         state = rng.choice(["open", "merged", "closed"], p=[0.45, 0.45, 0.1]).item()
