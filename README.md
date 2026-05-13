@@ -6,7 +6,12 @@ Ships four frontier-technique ablations with honest with-vs-without tables (thre
 
 > All data is synthetic and byte-deterministic from `seed=42`. No real customer data, no PII. Governance is a *pattern demo* on synthetic identity, not Okta / Azure AD federation (v1.5 scope).
 
-**Live demo**: <https://enterprise-knowledge-agent.fly.dev/> · Health: `/health` · Query: `POST /query` (SSE stream)
+**Live demo (dual-cloud)**:
+- Fly.io: <https://enterprise-knowledge-agent.fly.dev/>
+- Azure Container Apps: <https://eka-api.agreeabletree-5c626ab6.westeurope.azurecontainerapps.io/>
+
+Both expose the same routes: `/health`, `GET /`, `POST /query` (SSE stream). See `docs/deploy.md` (Fly.io) and `docs/deploy-azure.md` (Azure all-sidecar architecture) for reproduction.
+
 **Docs site**: <https://huangf06.github.io/enterprise-knowledge-agent/>
 **Observability**: every `/query` emits a Langfuse trace with per-node generations + token counts.
 
