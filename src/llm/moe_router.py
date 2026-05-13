@@ -36,11 +36,15 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 # synthesize -> Sonnet 4.6 for output quality (the visible output node).
 # tool_select -> DeepSeek (high call count, cheap is fine).
 # others -> DeepSeek (cheap baseline).
+# Synthesize stayed on DeepSeek post Sprint 5 Pareto: Sonnet 4.6 buys +0.07 ac
+# at 32x cost (within the n=10 noise floor), so the default is the cheap path.
+# See docs/sprint5_moe_pareto.md for the table. Sonnet 4.6 is still available
+# as an opt-in via MOE_CONFIG_PATH for quality-critical per-request routing.
 DEFAULT_MOE = {
     "plan": {"provider": "deepseek", "model": "deepseek-v4-pro[1m]"},
     "tool_select": {"provider": "deepseek", "model": "deepseek-v4-pro[1m]"},
     "reflect": {"provider": "deepseek", "model": "deepseek-v4-pro[1m]"},
-    "synthesize": {"provider": "anthropic", "model": "claude-sonnet-4-6"},
+    "synthesize": {"provider": "deepseek", "model": "deepseek-v4-pro[1m]"},
     "critique": {"provider": "anthropic", "model": "claude-haiku-4-5-20251001"},
     "judge": {"provider": "deepseek", "model": "deepseek-v4-pro[1m]"},
 }

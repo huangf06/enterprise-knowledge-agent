@@ -9,31 +9,35 @@ Per-node routing config + cost-projection harness in place. Live dispatch wiring
 - `src/llm/moe_router.py`: `DEFAULT_MOE` config, `PRICING_USD_PER_1M` lookup, `route_for_node` + `estimate_cost` + `projected_per_query_cost`.
 - `scripts/moe_projection.py`: reads the N2 baseline's per-node tokens and projects MoE-routed cost from `DEFAULT_MOE`.
 
-## Honest projection from N2 baseline
+## Honest projection from N2 baseline (post Sprint 5 default flip)
 
-`scripts/moe_projection.py` over the post-F1 rejudged baseline:
+After the Sprint 5 Pareto measurement, `DEFAULT_MOE.synthesize` was flipped
+from Sonnet 4.6 to DeepSeek (the v1 baseline route), because the measured
+quality lift was within the n=10 noise floor and did not justify the 32x
+cost. Latest `scripts/moe_projection.py`:
 
 | Node | Baseline USD | MoE USD | Ratio |
 |---|---:|---:|---:|
 | plan | 0.0071 | 0.0069 | 0.98x |
 | reflect | 0.0140 | 0.0140 | 1.00x |
-| synthesize | 0.0160 | **0.6776** | **42.4x** |
+| synthesize | 0.0160 | 0.0160 | 1.00x |
 | tool_select | 0.0239 | 0.0218 | 0.91x |
-| TOTAL | 0.0610 | 0.7204 | 11.8x |
-| per-query avg | $0.00203 | **$0.02401** | 11.8x |
+| TOTAL | 0.0610 | 0.0587 | 0.96x |
+| per-query avg | $0.00203 | $0.00196 | 0.96x |
 
-**Hard finding**: routing synthesize to Sonnet 4.6 makes total cost ~12x. DEFAULT_MOE is too premium-heavy for the high-frequency `synthesize` calls in our 30-scenario eval (synthesize fires once per query, but the input grows with tool_history so per-call cost is high on Sonnet).
+Net effect: DEFAULT_MOE is ~the same cost as the v1 baseline, with critique
+still on Haiku 4.5 (cheap structured-output endpoint for the closed
+4-question checklist). The Pareto experiment that justified this flip lives
+in [docs/sprint5_moe_pareto.md](sprint5_moe_pareto.md).
 
-## Sprint 5 decision points
+## Pre-flip context (kept for portfolio honesty)
 
-The MoE Pareto demo is the v4 hero feature for "I tested real cost/quality trade-offs". Before shipping `DEFAULT_MOE` as the production deploy config, decide:
-
-1. **synthesize routing**:
-   - Sonnet 4.6 (current default): 12x cost, presumably higher quality. Need to measure.
-   - Haiku 4.5: ~3-4x cost, modest quality lift.
-   - gpt-4o-mini: ~1.5x cost, comparable quality to DeepSeek.
-   - DeepSeek (no MoE): 1x cost, the v1 baseline.
-2. **measurement plan**: run the same 30 scenarios under each route, compare 3-judge consensus answer_correctness. Lift > 0.05 justifies the cost; below that, ship the cheaper variant.
+Earlier projection with Sonnet 4.6 as the synthesize default showed total
+cost ~12x baseline ($0.024 vs $0.002 per query). The v4.1 plan flagged
+this as "too premium-heavy" before any measurement. The Sprint 5 Pareto
+confirmed that projection's diagnosis: Sonnet's +0.07 ac quality lift sits
+at the n=10 noise floor, so the premium does not earn its keep on this
+workload.
 
 ## Vendor outage fallback (P8)
 

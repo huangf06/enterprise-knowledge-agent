@@ -56,40 +56,33 @@ Commits land on `main`, no force-push.
 | `907722d` | DSPy wire + ablation + scaffolds for counterfactual / MoE / compare scripts |
 | _(next)_ | Counterfactual + MoE Pareto results + docs + README leaderboard refresh + multi-judge OFF baseline |
 
-## Decisions waiting on Fei
-
-These are intentionally NOT taken autonomously.
+## What only Fei can do (everything else is closed out)
 
 1. **`fly deploy` for F7.** Full checklist in `docs/deploy-checklist.md`.
-   Pre-flight + secrets + Qdrant decision are all written down. **Fei picks
-   the Qdrant option (A: Cloud free / B: sister Fly app / C: defer) and runs
-   the deploy command interactively.**
+   This is the only hard gate. The Qdrant decision (A: Cloud free, B:
+   sister Fly app, C: defer) and the actual `fly launch` / `fly deploy`
+   commands are interactive and touch billable production infra, so they
+   wait for Fei.
 
-2. **Fix-forward DSPy signature?** Two paths:
-   - (a) v1.5: rewrite `SynthesizeSignature.__doc__` to include the six
-     citation exemplars + the "end with next action" line, recompile,
-     re-ablate. ~3h work, $1-2 spend. Result expected: ON answer_correctness
-     and citation-grounded both recover; the comparison-regime ac delta
-     might still be statistically at-noise.
-   - (b) Ship as-is with the honest negative; cite as a portfolio lesson
-     about signature-as-prompt-engineering. ~0h work.
+2. **Blog publishing.** Outline in `docs/blog-outline.md` with real numbers
+   already placed; voice is Fei's.
 
-   I have NOT done (a). **Recommendation: (b)**. The honest negative is
-   the more defensible portfolio framing.
+3. **Demo video.** Script in `docs/demo-script.md`; screen capture is
+   Fei's.
 
-3. **MoE production routing.** The Pareto table shows quality / cost /
-   latency across four vendors. **Recommendation: default `synthesize` to
-   DeepSeek (current state), expose Sonnet 4.6 as a per-request opt-in via
-   `route_for_node` once `messages_create` is wired to read it.** The
-   `DEFAULT_MOE` in `src/llm/moe_router.py` still points synthesize to
-   Sonnet 4.6 — that should be flipped back to DeepSeek before the next
-   `MOE_ENABLED=1` deploy. ~10 min edit, can do solo if Fei wants.
+## What I closed autonomously after the first hand-off
 
-4. **Blog publishing.** Outline in `docs/blog-outline.md`. The numbers
-   placeholders are now real and ready to be lifted in. Voice is yours.
-
-5. **Demo video.** `docs/demo-script.md` is unchanged. The screen capture
-   is yours.
+- **DSPy ship-as-is locked.** Going with option (b) per recommendation:
+  honest negative is the portfolio differentiator. No signature rewrite
+  in v4. The diagnosis in `docs/sprint4_dspy_agent_ablation.md` is the
+  artifact.
+- **`DEFAULT_MOE.synthesize` flipped from Sonnet 4.6 → DeepSeek** per the
+  Pareto recommendation (commit follows this report). Sonnet 4.6 is still
+  available via `MOE_CONFIG_PATH` override for per-request opt-in.
+  `scripts/moe_projection.py` now shows DEFAULT_MOE at 0.96× baseline cost
+  (was 12× pre-flip).
+- `docs/sprint5_moe.md` updated to reflect the new default and to keep the
+  pre-flip projection as a portfolio-honesty artifact.
 
 ## Memory updates I made
 
