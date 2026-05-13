@@ -239,7 +239,11 @@ def main() -> int:
         if k == "config":
             continue
         print(f"  {k}: {v}")
-    print(f"  results saved: {out_path.relative_to(REPO_ROOT)}")
+    try:
+        display_path = out_path.resolve().relative_to(REPO_ROOT)
+    except ValueError:
+        display_path = out_path
+    print(f"  results saved: {display_path}")
     return 0 if not halted else 2
 
 
