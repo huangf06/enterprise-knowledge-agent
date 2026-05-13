@@ -1,5 +1,6 @@
 data/synthetic/
 data/reference_baselines/
+data/eval/hotpotqa/
 
 .env
 .venv/
