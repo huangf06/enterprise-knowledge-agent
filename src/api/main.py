@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from typing import Any, AsyncIterator
+from typing import Any, AsyncIterator, Literal
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -37,7 +37,10 @@ api.add_middleware(
 class QueryBody(BaseModel):
     query: str = Field(min_length=1, max_length=2000)
     user_name: str = Field(min_length=1, description="Display name, must match users_seed.yaml")
-    user_role: str = Field(default="manager", description="IC | manager | HR")
+    user_role: Literal["IC", "manager", "HR", "exec"] = Field(
+        default="manager",
+        description="Resolved role for governance. Anything outside this enum is rejected at the API boundary.",
+    )
     max_iterations: int = Field(default=6, ge=1, le=10)
 
 

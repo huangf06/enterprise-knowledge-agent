@@ -13,7 +13,13 @@ RUN uv sync --no-dev --frozen
 COPY src /app/src
 COPY prompts /app/prompts
 COPY config /app/config
+COPY scripts /app/scripts
 COPY data /app/data
+
+# Regenerate synthetic data at build time so the image is self-contained.
+# data/synthetic is gitignored (and dockerignored), so we must produce it here
+# instead of relying on the developer's local state. seed=42 is byte-deterministic.
+RUN uv run python scripts/generate_data.py --seed 42 --output /app/data/synthetic
 
 EXPOSE 8000
 

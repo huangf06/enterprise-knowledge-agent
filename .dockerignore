@@ -18,3 +18,7 @@ htmlcov
 dist
 build
 *.egg-info
+# data/synthetic is gitignored and regenerated inside the image at build
+# time from seed=42. Excluding it here makes builds independent of whether
+# the developer has run scripts/generate_data.py locally.
+data/synthetic
