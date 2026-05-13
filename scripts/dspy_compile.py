@@ -35,6 +35,11 @@ def main() -> int:
     p.add_argument("--iterations", type=int, default=50)
     p.add_argument("--dry-run", action="store_true", help="Build the program + metric but do not compile")
     p.add_argument("--out", default="src/agent/compiled/synthesize.json")
+    p.add_argument(
+        "--training-input",
+        default=None,
+        help="Path to eval JSON used as training data. Defaults to the most recent eval run with tool_history populated.",
+    )
     args = p.parse_args()
 
     configure_dspy_lm()
@@ -55,11 +60,35 @@ def main() -> int:
     import dspy
 
     # Build training examples - actual answers come from a recent eval run.
-    runs = sorted((REPO_ROOT / "eval_results" / "runs").glob("eval-*-rejudged.json"))
-    if not runs:
-        print("ERROR: no rejudged eval run found to seed training set")
+    # Prefer the explicit --training-input; otherwise pick the most recent eval
+    # JSON that has tool_history populated (which is what compiled prompts will
+    # see at inference time). Older runs (pre commit 790e58e) lacked tool_history
+    # and produced empty-context demos that the optimizer can't learn from.
+    if args.training_input:
+        candidates = [Path(args.training_input)]
+    else:
+        all_runs = sorted(
+            (REPO_ROOT / "eval_results" / "runs").glob("eval-*.json"),
+            key=lambda p: p.stat().st_mtime,
+            reverse=True,
+        )
+        candidates = [p for p in all_runs if "-multijudge" not in p.stem and "-ragas" not in p.stem]
+    selected = None
+    for p in candidates:
+        try:
+            sample = json.loads(p.read_text())
+        except Exception:
+            continue
+        rows = sample.get("rows", [])
+        with_history = sum(1 for r in rows if r.get("tool_history"))
+        if with_history >= max(5, len(rows) // 3):
+            selected = p
+            break
+    if selected is None:
+        print("ERROR: no eval run with populated tool_history found; rerun scripts/run_eval.py first")
         return 2
-    data = json.loads(runs[-1].read_text())
+    print(f"Training data: {selected.name} (tool_history populated)")
+    data = json.loads(selected.read_text())
 
     examples = []
     for r in data["rows"]:
