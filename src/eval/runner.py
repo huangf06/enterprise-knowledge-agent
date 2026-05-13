@@ -11,6 +11,7 @@ from src.data.entity_consistency import load_users
 from src.eval.citation import citation_groundedness
 from src.eval.judge import judge
 from src.eval.scenarios import Scenario
+from src.eval.trajectory import trajectory_metrics
 from src.llm.cost_ledger import query_window
 
 
@@ -72,6 +73,7 @@ def run_scenario(scenario: Scenario) -> dict[str, Any]:
         "n_citations": 0,
         "n_brackets": 0,
     }
+    trajectory = trajectory_metrics(actual_sources, scenario.expected_sources, len(tool_history))
 
     return {
         "scenario_id": scenario.id,
@@ -84,6 +86,7 @@ def run_scenario(scenario: Scenario) -> dict[str, Any]:
         "tool_history": tool_history,
         "scores": scores,
         "citations": citations,
+        "trajectory": trajectory,
         "elapsed_s": round(agent_elapsed, 2),
         "agent_usage": agent_usage,
         "judge_usage": judge_usage,
