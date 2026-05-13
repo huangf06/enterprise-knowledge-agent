@@ -20,9 +20,14 @@ kill_timeout = "5s"
 [http_service]
   internal_port = 8000
   force_https = true
+  # Keep one machine warm so the first /query does not eat a ~2-3 minute
+  # Python import cold-start (langchain + langgraph + dspy + qdrant + cohere
+  # + langfuse + ragas + sentence-transformers all load on first import).
+  # Idle cost: ~$5/mo at shared-cpu-2x + 2GB. The extra HA replica still
+  # auto-stops when idle, so the second machine is only billed under load.
   auto_stop_machines = "stop"
   auto_start_machines = true
-  min_machines_running = 0
+  min_machines_running = 1
   processes = ["app"]
 
 [[http_service.checks]]

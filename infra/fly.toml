@@ -23,9 +23,12 @@ kill_timeout = "5s"
 [http_service]
   internal_port = 8000
   force_https = true
+  # Keep one machine warm so the first /query does not eat a ~2-3 minute
+  # Python import cold-start. See fly.toml at repo root for the full
+  # comment; this file is a mirror for documentation reference.
   auto_stop_machines = "stop"
   auto_start_machines = true
-  min_machines_running = 0
+  min_machines_running = 1
   processes = ["app"]
 
 [[http_service.checks]]
