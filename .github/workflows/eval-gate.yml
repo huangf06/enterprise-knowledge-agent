@@ -1,4 +1,5 @@
 name: eval-gate
+
 on:
   pull_request:
     branches: [main]
@@ -7,31 +8,47 @@ jobs:
   eval-subset:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    if: ${{ secrets.DEEPSEEK_API_KEY != '' }}
+    env:
+      DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
     steps:
+      - name: Check DeepSeek key
+        id: gate
+        run: |
+          if [ -z "$DEEPSEEK_API_KEY" ]; then
+            echo "::warning::DEEPSEEK_API_KEY not configured in repo secrets; skipping eval."
+            echo "has_key=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_key=true" >> "$GITHUB_OUTPUT"
+          fi
       - uses: actions/checkout@v4
+        if: steps.gate.outputs.has_key == 'true'
       - uses: actions/setup-python@v5
+        if: steps.gate.outputs.has_key == 'true'
         with:
           python-version: "3.11"
       - name: Install uv
+        if: steps.gate.outputs.has_key == 'true'
         run: pip install uv==0.11.8
       - name: Install deps
+        if: steps.gate.outputs.has_key == 'true'
         run: uv sync --extra dev
       - name: Generate synthetic data
+        if: steps.gate.outputs.has_key == 'true'
         run: uv run python scripts/generate_data.py --seed 42 --output data/synthetic
       - name: Run 20-scenario subset
+        if: steps.gate.outputs.has_key == 'true'
         env:
-          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           ANTHROPIC_BASE_URL: https://api.deepseek.com/anthropic
           LLM_MODEL: deepseek-v4-pro[1m]
         run: uv run python scripts/run_eval.py --limit 20
       - name: Run adversarial scenarios
+        if: steps.gate.outputs.has_key == 'true'
         env:
-          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           ANTHROPIC_BASE_URL: https://api.deepseek.com/anthropic
           LLM_MODEL: deepseek-v4-pro[1m]
         run: uv run python scripts/run_adversarial.py
       - name: Upload results
+        if: steps.gate.outputs.has_key == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: eval-results
