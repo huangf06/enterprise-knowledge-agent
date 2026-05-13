@@ -103,6 +103,24 @@ Plug the two `--multijudge.json` results into a small comparison script and you 
 - **9/9 v4.1 frontier + foundation features live or scaffolded.**
 - **3 unran ablations** (Self-Refine, MoE, Counterfactual) — each is one command + a $0.10-$50 spend away from a result.
 - **0 destructive ops, 0 force pushes, 0 unauthorized deploys.**
-- **67/67 tests green.**
+- **101/101 tests green** (added 34 new tests overnight covering F3/F4/F6/A7/Frontier #7).
+
+## Self-Refine smoke (post-report addition)
+
+Ran a 3-scenario smoke (`SELF_REFINE_ENABLED=1 ... --tier smoke`) to verify the
+critique-regenerate loop holds together end-to-end. Result lands at
+`eval_results/runs/eval-20260513-035655.json`.
+
+| scenario | answer | complete | tools | gov | action | elapsed |
+|---|---:|---:|---:|---:|---:|---:|
+| brief-003 (vs baseline) | 0.8 (1.0) | 1.0 (1.0) | 1.0 (1.0) | 1.0 (1.0) | 0.8 (0.9) | 187s (+60s) |
+| qa-003 (vs baseline) | 0.95 (1.0) | 0.95 (1.0) | 1.0 (1.0) | 1.0 (1.0) | **0.5 (0.0)** | 346s (+153s) |
+| conflict-001 (vs baseline) | 0.0 (0.0) | 0.0 (0.0) | 1.0 (1.0) | 1.0 (1.0) | 0.0 (0.0) | 92s (+15s) |
+
+Latency overhead 50-150% (critique + occasional regen on hard cases). Quality:
+**qa-003 action_recommend** went 0 -> 0.5 (Self-Refine identified the missing
+action and forced a regen), **brief-003** had a small regression (0.9 -> 0.8 on
+action). Sample size is 3; not a real ablation. Full 30-scenario with-vs-without
+is the next move (~3-4 hr wallclock, free since DeepSeek).
 
 I'm going idle. When you wake up, pick a decision off the punch-list and we move from there.
