@@ -1,0 +1,48 @@
+{
+  "predict.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "Synthesize the agent's final answer from question + plan + tool evidence.\n\nRespect single-tenant + audit-log boundaries. Inline citations of the form\n[source:id]. End with \"Audit: N tool calls.\" Concise, prioritized.",
+      "fields": [
+        {
+          "prefix": "Query:",
+          "description": "User's question"
+        },
+        {
+          "prefix": "User Name:",
+          "description": "User's display name"
+        },
+        {
+          "prefix": "User Role:",
+          "description": "User's role for RBAC context"
+        },
+        {
+          "prefix": "Plan:",
+          "description": "Execution plan from plan_node"
+        },
+        {
+          "prefix": "Tool History:",
+          "description": "Concatenated tool calls + results"
+        },
+        {
+          "prefix": "Reasoning:",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "Synthesized answer with citations + audit line"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.2.1",
+      "cloudpickle": "3.1"
+    }
+  }
+}

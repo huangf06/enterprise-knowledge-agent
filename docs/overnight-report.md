@@ -105,22 +105,42 @@ Plug the two `--multijudge.json` results into a small comparison script and you 
 - **0 destructive ops, 0 force pushes, 0 unauthorized deploys.**
 - **101/101 tests green** (added 34 new tests overnight covering F3/F4/F6/A7/Frontier #7).
 
-## Self-Refine smoke (post-report addition)
+## Frontier #3 Self-Refine: full 30-scenario ablation (2026-05-13 afternoon)
 
-Ran a 3-scenario smoke (`SELF_REFINE_ENABLED=1 ... --tier smoke`) to verify the
-critique-regenerate loop holds together end-to-end. Result lands at
-`eval_results/runs/eval-20260513-035655.json`.
+OFF: `eval_results/runs/eval-20260513-105857.json`
+ON:  `eval_results/runs/eval-20260513-111407.json`
+Detail: `docs/frontier3_self_refine.md`
 
-| scenario | answer | complete | tools | gov | action | elapsed |
-|---|---:|---:|---:|---:|---:|---:|
-| brief-003 (vs baseline) | 0.8 (1.0) | 1.0 (1.0) | 1.0 (1.0) | 1.0 (1.0) | 0.8 (0.9) | 187s (+60s) |
-| qa-003 (vs baseline) | 0.95 (1.0) | 0.95 (1.0) | 1.0 (1.0) | 1.0 (1.0) | **0.5 (0.0)** | 346s (+153s) |
-| conflict-001 (vs baseline) | 0.0 (0.0) | 0.0 (0.0) | 1.0 (1.0) | 1.0 (1.0) | 0.0 (0.0) | 92s (+15s) |
+| Metric | OFF | ON | Delta |
+|---|---:|---:|---:|
+| answer_correctness | 0.6917 | 0.6150 | **-0.0767** |
+| completeness | 0.7450 | 0.6933 | -0.0517 |
+| tool_selection_quality | 0.9367 | 0.9417 | +0.0050 |
+| governance_compliance | 1.0000 | 1.0000 | 0.0000 |
+| action_recommend_quality | 0.5250 | 0.4867 | -0.0383 |
+| cite_source_coverage | 0.9155 | **1.0000** | **+0.0845** |
+| cite_id_grounded | 0.7521 | 0.6723 | -0.0798 |
+| avg_elapsed_s | 150.40 | 177.91 | **+27.51s (+18%)** |
 
-Latency overhead 50-150% (critique + occasional regen on hard cases). Quality:
-**qa-003 action_recommend** went 0 -> 0.5 (Self-Refine identified the missing
-action and forced a regen), **brief-003** had a small regression (0.9 -> 0.8 on
-action). Sample size is 3; not a real ablation. Full 30-scenario with-vs-without
-is the next move (~3-4 hr wallclock, free since DeepSeek).
+**Honest negative result**: 3 of 5 rubric metrics regress 0.04-0.08, only source_coverage improves materially. Self-Refine as P6-constrained (critique sees only `(question, answer)`, no tool_history) cannot judge groundedness reliably, so it forces regenerations that lose detail. Ship with `SELF_REFINE_ENABLED=0` default; keep code path for users wanting the source_coverage lift.
+
+A real bug was found during this run and fixed: `cost_ledger` shared SQLite across concurrent eval processes cross-contaminated per_node USD numbers between OFF and ON. Quality + latency above are clean; per-query USD numbers are footnoted as approximate. Fix: per-PID rows + filtered queries (commit `e332937`).
+
+## Frontier #1 DSPy: compilation result (2026-05-13 afternoon)
+
+`scripts/dspy_compile.py --training-input eval-20260513-105857.json`
+Output: `src/agent/compiled/synthesize.json`
+Detail: `docs/sprint4_dspy_result.md`
+
+After fixing a training-data bug (v1/v2 used pre-tool_history N2 baseline; v3 uses the fresh OFF eval), DSPy v3 produced 6 candidate programs scoring 78-82 on the 2-judge training metric. **Best candidate has zero demos** — DSPy's BootstrapFewShotWithRandomSearch explored 1-4 few-shot demonstrations and chose to keep none. Reading: the manual `prompts/synthesize.md` is already strong; few-shot demos do not add value on this benchmark.
+
+Cost: ~$1.50 of Anthropic + OpenAI for v3 (vs $25-50 budgeted in the plan).
+
+## Combined finding from both frontier techniques
+
+Self-Refine: regresses 0.04-0.08 on rubric, lifts source_coverage +0.08.
+DSPy: best candidate is zero-shot, no measurable lift over manual prompts on training metric.
+
+Both techniques tell the same story on this benchmark: **the v1 synthesize prompt is already well-tuned and frontier optimization does not move the needle**. This is a strong portfolio signal *because* it is a negative one. Many production LLM systems ship DSPy / Self-Refine claims with no ablation; v4 ships both with explicit "with vs without" measurements, finds they do not help in our setup, and documents the result honestly.
 
 I'm going idle. When you wake up, pick a decision off the punch-list and we move from there.
