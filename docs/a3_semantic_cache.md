@@ -30,15 +30,15 @@ These numbers are *per-hit* gains. The end-to-end lift depends on hit rate, whic
 
 ## Ablation
 
-The honest leaderboard ships three rows side-by-side:
+The headline frontier ablation lives at `docs/frontier3_self_refine.md` (Self-Refine ON vs OFF, n=30) and was the source for the README leaderboard row. A combined "Self-Refine ON × cache ON" ablation was not run in v4 because Self-Refine shipped OFF by default per its honest-negative result; running the cache experiment ON-top-of an OFF feature has no end-to-end deploy story. Per-component numbers from the two underlying runs:
 
-| Variant | per-query USD | p50 latency | quality (consensus answer_correctness) |
-|---|---:|---:|---:|
-| Baseline (no cache, no Self-Refine) | 0.00203 | 177s | 0.74 |
-| + Self-Refine | TBD | TBD | TBD |
-| + Self-Refine + semantic cache | TBD | TBD | (quality unchanged on hit) |
+| Variant | per-query USD | p50 latency | quality (consensus answer_correctness) | Source |
+|---|---:|---:|---:|---|
+| Baseline (Self-Refine OFF, cache OFF) | $0.00361 | 163s | 0.69 | `eval_results/runs/eval-20260513-105857.json` (N2 baseline + leaderboard) |
+| Self-Refine ON, cache OFF | $0.00388 | 177s | 0.62 | `docs/frontier3_self_refine.md` (honest negative, hence OFF default) |
+| + cache ON | not measured (v1.5) | not measured (v1.5) | (quality unchanged on hit by construction) | deferred |
 
-The cache row's "quality on hit" is by construction equal to the cached answer's quality - so the column doesn't move. The point is the cost/latency Pareto, not a quality gain.
+The cache row's "quality on hit" is by construction equal to the cached answer's quality, so the column doesn't move; the point is the cost/latency Pareto, not a quality gain. The v1.5 follow-up is to re-run with the production cache hit rate and report the end-to-end USD/query against a real traffic mix.
 
 ## Production hazards
 

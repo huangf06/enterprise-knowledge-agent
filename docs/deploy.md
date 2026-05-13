@@ -1,10 +1,12 @@
 # Deploy
 
+> Status: Fly deploy live at <https://enterprise-knowledge-agent.fly.dev/> since 2026-05-13. HF Spaces is documented but not in production use.
+
 Two supported deploy targets in v1, both Anthropic-operated-free. Pick one.
 
-## Option A — Fly.io (recommended for v4 public demo)
+## Option A — Fly.io (live)
 
-`infra/fly.toml` is pre-configured for the v4 demo: region `ams`, shared-cpu-2x + 2GB RAM (sized for BGE-M3 embedding model in-process), auto-stop when idle for cost control.
+`fly.toml` at repo root is the canonical config (`infra/fly.toml` is a documentation mirror): region `ams`, shared-cpu-2x + 2GB RAM (sized for BGE-M3 embedding model in-process), `min_machines_running = 1` so one machine stays warm 24/7 to avoid the ~2-3 minute Python import cold-start. The HA replica auto-stops when idle.
 
 ```bash
 # One-time (from repo root):
@@ -26,7 +28,7 @@ fly deploy
 fly open  # opens https://enterprise-knowledge-agent.fly.dev
 ```
 
-Cost (post-launch, with auto-stop): ~$5-10/month for shared-cpu-2x + 2GB at typical demo traffic. Qdrant currently expected to run in-cluster via a sister Fly app or via Qdrant Cloud Free; the v4 Sprint 1 deploy assumes Qdrant cloud (sister app deploy is a Sprint 5 cleanup).
+Cost in production (~$5-10/month) for the warm shared-cpu-2x + 2GB machine + auto-stopping HA replica at typical demo traffic. Qdrant is **not** used by the `/query` runtime in v4 (only by offline retrieval indexing scripts), so the deploy is single-app; the sister-app Qdrant pattern is deferred to v1.5.
 
 Observability after deploy:
 - Langfuse Cloud dashboard at https://cloud.langfuse.com (public-read URL captured in project_eka_v4_day1_setup memory).

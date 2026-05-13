@@ -1,4 +1,4 @@
-# Signature blog outline — "Three frontier techniques, three honest negatives"
+# Signature blog outline — "Four frontier techniques. Three honest negatives, one positive."
 
 > Draft outline for Fei's voice. Tone notes: terse, technical, "show your
 > losses" framing. The reader is a hiring manager in NL who has seen 50 LLM
@@ -6,13 +6,13 @@
 
 ## Working title
 
-**"I shipped Self-Refine, DSPy, and Multi-LLM MoE in my enterprise agent. Two
-hurt the metric and one barely paid for itself. Here is the math."**
+**"I shipped Self-Refine, DSPy, MoE, and Counterfactual in my enterprise agent. Three hurt or were within noise; one held governance under perturbation. Here is the math, including the Goodhart reversal I almost missed."**
 
 Alternate hooks (pick on personal taste):
 - "What the LLM optimization papers don't tell you when n=30."
-- "Three frontier techniques on a real benchmark. Here are the with-vs-without
+- "Four frontier techniques on a real benchmark. Here are the with-vs-without
   tables I almost did not publish."
+- "Multi-judge consensus flipped the sign of one of my ablations. That is the post."
 
 ## Opening (1-2 paragraphs)
 
@@ -48,23 +48,37 @@ out of v4.
 Closer: ship `SELF_REFINE_ENABLED=0` default. Keep the code path for the
 +0.08 source_coverage in audit-heavy use cases.
 
-## Section 3 — DSPy: best candidate has zero demos
+## Section 3 — DSPy: the Goodhart reversal
 
 Cite the v4.1 DSPy work: P13 (one node only — `synthesize`), P15 (dual judge
 regime), N1 (judge-pool isolation). Compilation result table:
 
 - 6 candidate programs scored 78-82 on the 2-judge training metric
 - best variant has zero few-shot demonstrations
-- agent-level ablation on 10 fast-tier scenarios shows {INSERT_NUMBERS_HERE}
+- agent-level ablation on 10 fast-tier scenarios (see `docs/sprint4_dspy_agent_ablation.md`):
 
-The interesting line: **DSPy validated the existing prompt rather than
-replacing it.** BootstrapFewShotWithRandomSearch explored 1-4 demos and chose
-none. A negative result is also a result — it means the manual prompt was
-already on the local optimum, and the DSPy infrastructure cost (~$1.50 single
-compile, ~12 min wall) bought a confirmation rather than a lift.
+| Metric | OFF | ON (2-judge, training) | ON (3-judge, comparison) |
+|---|---:|---:|---:|
+| answer_correctness | 0.83 (1J) / 0.825 (2J) / 0.855 (3J) | **+0.05 (2J)** | **-0.03 (3J)** |
+| action_recommend_quality | 0.64 (1J) | -0.13 (2J) | -0.05 (3J) |
+| cite_source_coverage (algorithmic) | 1.00 | 0.00 | 0.00 |
+
+The headline finding: **the +0.05 lift on the 2-judge regime is a Goodhart
+effect**. DSPy trained against a 2-judge metric that excluded DeepSeek (the
+agent's own model class, per v4.1 N1). Adding DeepSeek back as a third
+judge — the comparison metric every other ablation uses — flips the sign
+to **-0.03**. Without dual-regime reporting, this would have shipped as
+"+0.05 lift". With it, the project found a class of failure that single-
+judge eval cannot see.
+
+The matching cite_source_coverage **-1.0** is unrelated to judges:
+algorithmic citation grounding regex'd on platform-prefixed tokens like
+`[jira:X]`; the DSPy signature dropped the six citation exemplars from the
+manual prompt, so the compiled model emitted generic `[source:N]` tokens.
+Anything not in the DSPy signature is gone after compilation.
 
 When DSPy would have paid off: a less-tuned starting prompt, a larger
-training set, a different agent surface.
+training set, a signature that includes all the rubric criteria.
 
 ## Section 4 — Multi-LLM MoE: pick your trade-off
 
@@ -121,11 +135,10 @@ sponsored sections, no AI-art header — the seriousness is the brand.
 
 ## Pre-publish checklist
 
-- [ ] Replace `{INSERT_NUMBERS_HERE}` placeholders with final ablation numbers
-- [ ] Pull link to the 3 ablation docs (`frontier3_self_refine.md`,
-      `sprint4_dspy_agent_ablation.md`, `sprint5_moe_pareto.md`,
-      `sprint6_counterfactual_result.md`)
 - [ ] Run through Hemingway editor — target Grade 8-10
 - [ ] Personal sentence in the closer: why you did this and what you would
       change next
 - [ ] Two-paragraph "about the project" footer pointing back to the repo
+- [ ] Re-check the 4 ablation docs are reachable from the blog
+      (`frontier3_self_refine.md`, `sprint4_dspy_agent_ablation.md`,
+      `sprint5_moe_pareto.md`, `sprint6_counterfactual_result.md`)

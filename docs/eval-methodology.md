@@ -1,6 +1,6 @@
-# Eval methodology (blog draft)
+# Eval methodology
 
-> Draft for the eval-methodology blog post. Honest closed-loop chapter per design Section 7.G.
+> Status: calibrated, single-author scope. External-reviewer spot-check is v1.5 scope. Honest closed-loop chapter per design Section 7.G.
 
 ## The closed-loop problem
 
@@ -8,10 +8,10 @@ The 30 self-authored scenarios were written by the same person who designed the 
 
 We mitigate (not eliminate) this with four practices:
 
-1. **External retrieval sanity check.** HotpotQA and MS Marco run on the same retrieval pipeline. MS Marco MRR@10 of 0.5381 (vs the BGE-M3 published baseline of ~0.45) shows the retrieval primitive isn't degenerate. HotpotQA F1 of 0.077 is documented as a v1 known gap caused by naive span extraction, not the retrieval itself.
+1. **External retrieval sanity check.** HotpotQA and MS Marco run on the same retrieval pipeline. MS Marco MRR@10 of 0.5381 (vs the BGE-M3 published baseline of ~0.45) shows the retrieval primitive isn't degenerate. HotpotQA F1 lifted from 0.077 (naive span extraction) to 0.29 (llm-answer mode in W6), still below the 0.70 design target; the remaining gap is the simple 2-passage retrieval and no QA-specific fine-tune, not the retrieval primitive.
 2. **Determinism.** Synthetic data, scenarios, and judge prompts are byte-deterministic from a single seed. Anyone can reproduce the run and inspect every step.
 3. **Adversarial regression.** 10 cross-source attack vectors check that the agent refuses what it should refuse, not just answers what it should answer. Governance compliance is a separate axis from answer correctness.
-4. **External reviewer slot.** The README's W7 hard gate invites 1-2 NL tech contacts to spot-check 5-10 scenarios. If we can't get that pre-launch, the README declares "single-author calibration only."
+4. **External reviewer slot.** The W7 hard gate planned 1-2 NL tech-contact spot-checks of 5-10 scenarios. The pre-launch slot did not happen; the README header therefore declares "LLM-judge with single-author calibration" explicitly. External-reviewer review is v1.5 scope.
 
 ## What the leaderboard means
 
