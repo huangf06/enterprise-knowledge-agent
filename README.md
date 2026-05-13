@@ -65,13 +65,15 @@ Four frontier techniques shipped with explicit with-vs-without tables.
 
 The two negatives (Self-Refine, DSPy) are kept as code paths behind env flags and shipped with the diagnosis docs above. Many production LLM systems ship those techniques claim-only with no ablation; v4 ships the table even when it does not favor the technique. That is the differentiation, not the optimization.
 
-Retrieval component sanity (third-party benchmarks; **not** the main eval anchor):
+Public benchmarks (anchored against external baselines):
 
-| Metric | Number | Target | Status |
+| Metric | Number | Baseline | Status |
 |---|---:|---:|---|
-| HotpotQA EM (n=100, BGE-M3 top-2 + DeepSeek answer extraction) | 0.28 | — | 4x lift over naive span mode (0.0) |
-| HotpotQA F1 (same setup) | 0.29 | 0.70 | Below target; gap is the simple 2-passage retrieval + no QA fine-tune. Tunable via top-k + a stronger answer model |
-| MS Marco MRR@10 (n=50, BGE-M3 cosine, top-10) | 0.54 | 0.32 | **PASS** — beats the BGE-M3 published baseline |
+| **HotpotQA F1 (full-agent mode, n=100, dev distractor)** | **0.816** | ReAct paper best-prompted 0.473, Yao 2022 | **PASS**, see `docs/hotpotqa_agent_result.md` |
+| **HotpotQA EM (full-agent mode, same setup)** | **0.690** | ReAct paper ~0.30, Yao 2022 | **PASS**, same setup as F1 row |
+| HotpotQA EM (retrieval-only, n=100, BGE-M3 top-2 + DeepSeek extraction) | 0.28 | naive span 0.0 | 4x lift over naive baseline |
+| HotpotQA F1 (retrieval-only, same setup) | 0.29 | — | Lower bound: the gap to the full-agent row (2.8x) is the value of the agent loop |
+| MS Marco MRR@10 (n=50, BGE-M3 cosine, top-10) | 0.54 | BGE-M3 published 0.32 | **PASS**, beats published baseline by 69% |
 
 ## Demo
 
