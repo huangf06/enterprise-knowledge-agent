@@ -1,0 +1,40 @@
+{
+  "params": {
+    "n": 30,
+    "top_k": 10,
+    "methods": null
+  },
+  "rows": [
+    {
+      "method": "bm25",
+      "n": 30,
+      "mrr@10": 0.3723,
+      "ndcg@10": 0.5207
+    },
+    {
+      "method": "dense",
+      "n": 30,
+      "mrr@10": 0.5448,
+      "ndcg@10": 0.6568
+    },
+    {
+      "method": "hybrid_rrf",
+      "n": 30,
+      "mrr@10": 0.5374,
+      "ndcg@10": 0.6492
+    },
+    {
+      "method": "dense_plus_rerank",
+      "n": 30,
+      "mrr@10": 0.6456,
+      "ndcg@10": 0.7334
+    },
+    {
+      "method": "hybrid_plus_rerank",
+      "n": 30,
+      "mrr@10": 0.6456,
+      "ndcg@10": 0.7334
+    }
+  ],
+  "elapsed_s": 637.05
+}

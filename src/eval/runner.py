@@ -8,6 +8,7 @@ from typing import Any
 
 from src.agent import app
 from src.data.entity_consistency import load_users
+from src.eval.citation import citation_groundedness
 from src.eval.judge import judge
 from src.eval.scenarios import Scenario
 from src.llm.cost_ledger import query_window
@@ -64,6 +65,14 @@ def run_scenario(scenario: Scenario) -> dict[str, Any]:
     judge_end_iso = datetime.now(timezone.utc).isoformat()
     judge_usage = query_window(judge_start_iso, judge_end_iso)
 
+    citations = citation_groundedness(answer, tool_history) if ok else {
+        "well_formedness": 0.0,
+        "source_coverage": 0.0,
+        "id_grounded": 0.0,
+        "n_citations": 0,
+        "n_brackets": 0,
+    }
+
     return {
         "scenario_id": scenario.id,
         "category": scenario.category,
@@ -72,7 +81,9 @@ def run_scenario(scenario: Scenario) -> dict[str, Any]:
         "answer": answer,
         "tool_calls": len(tool_history),
         "tools_used": actual_sources,
+        "tool_history": tool_history,
         "scores": scores,
+        "citations": citations,
         "elapsed_s": round(agent_elapsed, 2),
         "agent_usage": agent_usage,
         "judge_usage": judge_usage,
