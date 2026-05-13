@@ -1,8 +1,8 @@
 # Deploy
 
-> Status: Fly deploy live at <https://enterprise-knowledge-agent.fly.dev/> since 2026-05-13. HF Spaces is documented but not in production use.
+> Status: Fly deploy live at <https://enterprise-knowledge-agent.fly.dev/> since 2026-05-13. Azure Container Apps added as a second live target on the same date; see [docs/deploy-azure.md](deploy-azure.md). HF Spaces is documented but not in production use.
 
-Two supported deploy targets in v1, both Anthropic-operated-free. Pick one.
+Three deploy targets in v1. Fly.io is the primary URL cited in the README hero. Azure Container Apps is the cross-cloud demonstration (3-app sidecar stack matching `docker-compose.yml`). HF Spaces is the Gradio-UI variant.
 
 ## Option A — Fly.io (live)
 
