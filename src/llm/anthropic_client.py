@@ -22,6 +22,7 @@ import anthropic
 from dotenv import load_dotenv
 
 from src.llm.cost_ledger import Usage, record
+from src.observability.langfuse_tracker import record_generation
 
 load_dotenv()
 
@@ -92,6 +93,17 @@ def messages_create(
             cached_input_tokens=getattr(usage, "cache_read_input_tokens", 0) or 0,
             output_tokens=getattr(usage, "output_tokens", 0) or 0,
         ),
+    )
+    output_text = "\n".join(b.text for b in resp.content if b.type == "text")
+    record_generation(
+        node=node,
+        model=model_id(),
+        input_messages=messages,
+        output_text=output_text,
+        usage={
+            "input": getattr(usage, "input_tokens", 0) or 0,
+            "output": getattr(usage, "output_tokens", 0) or 0,
+        },
     )
     return resp
 
