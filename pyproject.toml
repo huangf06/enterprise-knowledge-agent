@@ -55,3 +55,9 @@ select = ["E", "F", "I", "W", "UP", "B", "SIM"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
+
+[dependency-groups]
+docs = [
+    "mkdocs>=1.6.1",
+    "mkdocs-material>=9.7.6",
+]

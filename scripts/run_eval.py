@@ -20,6 +20,19 @@ from src.eval import load_scenarios, run_scenario  # noqa: E402
 
 RUNS_DIR = REPO_ROOT / "eval_results" / "runs"
 
+# A5: 3-tier quick-eval scenario subsets.
+# Smoke: 1 easy per category x 3 categories - sanity check that nothing crashes.
+# Fast:  2 per category - representative spread, used daily during active sprint.
+# Full:  all 30 - sprint boundaries only per v4.1 P14.
+SMOKE_IDS = ("brief-003", "conflict-001", "qa-003")
+FAST_IDS = (
+    "brief-003", "brief-008",
+    "decision-003", "decision-005",
+    "qa-003", "qa-006",
+    "conflict-001", "conflict-003",
+    "multi-002", "multi-003",
+)
+
 
 def _pct(values: list[float], p: float) -> float:
     if not values:
@@ -87,12 +100,24 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--limit", type=int, default=None, help="Run only the first N scenarios.")
     parser.add_argument("--category", default=None, help="Restrict to one category.")
+    parser.add_argument(
+        "--tier",
+        choices=("smoke", "fast", "full"),
+        default=None,
+        help="A5 3-tier preset. smoke=3 easy, fast=10 mixed, full=30 all. Overrides --limit.",
+    )
     args = parser.parse_args()
 
     scenarios = load_scenarios()
-    if args.category:
+    if args.tier == "smoke":
+        wanted = set(SMOKE_IDS)
+        scenarios = [s for s in scenarios if s.id in wanted]
+    elif args.tier == "fast":
+        wanted = set(FAST_IDS)
+        scenarios = [s for s in scenarios if s.id in wanted]
+    elif args.category:
         scenarios = [s for s in scenarios if s.category == args.category]
-    if args.limit is not None:
+    if args.tier is None and args.limit is not None:
         scenarios = scenarios[: args.limit]
 
     print(f"Running {len(scenarios)} scenarios...", flush=True)

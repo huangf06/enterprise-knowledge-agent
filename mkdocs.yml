@@ -1,0 +1,72 @@
+site_name: Enterprise Knowledge Agent
+site_description: Production-grade cross-source agentic reasoning over six SaaS surfaces, with auditable governance and self-authored eval.
+site_url: https://huangf06.github.io/enterprise-knowledge-agent/
+repo_url: https://github.com/huangf06/enterprise-knowledge-agent
+repo_name: huangf06/enterprise-knowledge-agent
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - content.code.copy
+    - content.code.annotate
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Architecture:
+      - System overview: architecture.md
+      - Governance design: governance-design.md
+      - Failure modes: failure-modes.md
+      - Eval methodology: eval-methodology.md
+  - Plan:
+      - v4 frontier plan: v4-frontier-plan.md
+      - v4 plan review (round 2): v4-plan-review-r2.md
+  - Eval:
+      - N2 cost/latency baseline: n2_baseline.md
+      - A1 retrieval ablation: a1_retrieval_ablation.md
+      - F4 citation groundedness: f4_citation_groundedness.md
+  - Demo and deploy:
+      - Demo script: demo-script.md
+      - Deploy guide: deploy.md
+      - HR Helpdesk case study: case-study-hr-helpdesk.md
+  - History:
+      - Status: STATUS.md
+      - W1 report: w1_report.md
+      - W2 report: w2_report.md
+      - W4 report: w4_report.md
+      - W5 report: w5_report.md
+      - v2 plan (superseded): v2-frontier-plan.md
+      - v2 review (Opus): v2-plan-opus-review.md
+      - v3 plan (superseded): v3-frontier-plan.md
+      - v3 review (Codex): v3-plan-codex-review.md
+      - Codex review prompt: codex-review-prompt.md
