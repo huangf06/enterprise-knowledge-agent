@@ -27,3 +27,8 @@ class AgentState(TypedDict, total=False):
     pending_tool: dict[str, Any] | None  # set by tool_select, consumed by tool_execute
 
     final_answer: str
+
+    # v4 Frontier #3 Self-Refine
+    critique_passed: bool
+    critique_concerns: list[str]
+    revision_count: int
