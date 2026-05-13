@@ -2,6 +2,16 @@
 
 Production-grade open-source enterprise knowledge agent. Cross-source agentic reasoning over six SaaS surfaces (Slack / Jira / Calendar / GitHub / GDocs / Email) with auditable cross-source policy enforcement.
 
+**Live demo**: <https://enterprise-knowledge-agent.fly.dev/> · Health: `/health` · Query: `POST /query` (SSE stream)
+**Docs site**: <https://huangf06.github.io/enterprise-knowledge-agent/>
+**Observability**: every `/query` emits a Langfuse trace with per-node generations + token counts.
+
+```bash
+curl -N -X POST https://enterprise-knowledge-agent.fly.dev/query \
+  -H 'Content-Type: application/json' \
+  -d '{"query":"What is on my calendar today?","user_name":"Sarah Chen","user_role":"manager"}'
+```
+
 ## Leaderboard
 
 Self-authored cross-source briefing benchmark, 30 knowledge-worker scenarios. LLM-judge with single-author calibration; v4 adds multi-judge consensus (Anthropic Haiku 4.5 + OpenAI gpt-4o-mini + DeepSeek) on every published ablation per the v4.1 honesty calibration policy. See `docs/eval-methodology.md` for the closed-loop chapter.
@@ -56,12 +66,20 @@ Retrieval component sanity (third-party benchmarks; **not** the main eval anchor
 
 A 30-second Monday morning briefing: Sarah Chen asks for today's priorities. The agent calls four tools across Slack / Jira / Calendar / Email, detects a Thursday all-hands vs. Alice 1:1 conflict, finds a Q3-launch PR blocking her review queue, surfaces the stale EY contract follow-up email, and recommends an ordered action list — with inline citations and a tool-call audit summary.
 
-Demo video and reveal-panel GIF land in `docs/demo.gif` at W8. The full run trace is preserved in `docs/w2_report.md`.
+Try it now on the live deploy:
+
+```bash
+curl -N -X POST https://enterprise-knowledge-agent.fly.dev/query \
+  -H 'Content-Type: application/json' \
+  -d '{"query":"What is on my calendar today?","user_name":"Sarah Chen","user_role":"manager"}'
+```
+
+Recorded 30-second demo video is pending; `docs/demo-script.md` is the 6-scene shoot script.
 
 ## Quickstart
 
 ```bash
-git clone https://github.com/<user>/enterprise-knowledge-agent.git
+git clone https://github.com/huangf06/enterprise-knowledge-agent.git
 cd enterprise-knowledge-agent
 cp .env.example .env
 # Fill DEEPSEEK_API_KEY in .env

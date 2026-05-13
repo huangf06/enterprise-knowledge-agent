@@ -54,21 +54,30 @@ Commits land on `main`, no force-push.
 | Commit | What |
 |---|---|
 | `907722d` | DSPy wire + ablation + scaffolds for counterfactual / MoE / compare scripts |
-| _(next)_ | Counterfactual + MoE Pareto results + docs + README leaderboard refresh + multi-judge OFF baseline |
+| `fe935ec` | Counterfactual + MoE Pareto results + multi-judge regimes + Sprint 7 polish |
+| `77abeda` | Flip DEFAULT_MOE.synthesize Sonnet 4.6 → DeepSeek per Pareto |
+| `336b3d3` | Deploy prep: remove Qdrant mount + add .dockerignore |
+| `e00828a` | Deploy fix: root fly.toml + README.md in Dockerfile build context |
+| `62f3b05` | Deploy fix: keep one Fly machine warm (min_machines_running=1) |
+| `(this)`  | Final polish: live demo URL in README + index.md + report |
 
-## What only Fei can do (everything else is closed out)
+## Fly deploy: DONE, live, verified
 
-1. **`fly deploy` for F7.** Full checklist in `docs/deploy-checklist.md`.
-   This is the only hard gate. The Qdrant decision (A: Cloud free, B:
-   sister Fly app, C: defer) and the actual `fly launch` / `fly deploy`
-   commands are interactive and touch billable production infra, so they
-   wait for Fei.
+Production URL: <https://enterprise-knowledge-agent.fly.dev/>
 
-2. **Blog publishing.** Outline in `docs/blog-outline.md` with real numbers
+End-to-end verified 2026-05-13 14:24 UTC. SSE stream shows all 5 agent
+nodes firing (plan → tool_select → tool_execute → reflect → synthesize),
+citation format is the production `[cal:query-1]` shape, governance and
+audit-line behaviors intact. See [[project-eka-v4-deploy-live]] memory for
+full deploy state including secrets list and gotchas surfaced.
+
+## What only Fei can do (only two items left)
+
+1. **Blog publishing.** Outline in `docs/blog-outline.md` with real numbers
    already placed; voice is Fei's.
 
-3. **Demo video.** Script in `docs/demo-script.md`; screen capture is
-   Fei's.
+2. **Demo video.** Script in `docs/demo-script.md`; screen capture is
+   Fei's. Use the live URL above for the actual recording.
 
 ## What I closed autonomously after the first hand-off
 

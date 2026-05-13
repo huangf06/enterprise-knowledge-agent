@@ -2,9 +2,9 @@
 
 Production-grade open-source enterprise knowledge agent. Cross-source agentic reasoning over six SaaS surfaces (Slack / Jira / Calendar / GitHub / GDocs / Email) with auditable cross-source policy enforcement.
 
-## Repo
-
-[github.com/huangf06/enterprise-knowledge-agent](https://github.com/huangf06/enterprise-knowledge-agent)
+- **Live demo**: <https://enterprise-knowledge-agent.fly.dev/>
+- **Repo**: [github.com/huangf06/enterprise-knowledge-agent](https://github.com/huangf06/enterprise-knowledge-agent)
+- **Observability**: every `/query` emits a Langfuse trace with per-node generations.
 
 ## What this site contains
 

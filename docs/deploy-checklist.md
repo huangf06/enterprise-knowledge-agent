@@ -1,8 +1,13 @@
 # Fly.io Deploy Checklist (handoff to Fei)
 
-> Status: ready for review. **No `fly deploy` issued yet.** This checklist is the
-> hand-off so Fei can run the deploy interactively and confirm the production
-> endpoint comes up clean.
+> **Status: DONE 2026-05-13.** Production URL: <https://enterprise-knowledge-agent.fly.dev/>.
+> This document is kept as a record of what was decided + what gotchas the
+> first deploy surfaced. See `[[project-eka-v4-deploy-live]]` memory for the
+> living configuration state (warm machine, secrets list, app name).
+>
+> If redeploying from scratch on a different Fly account, follow the steps
+> below as-written; the Dockerfile + fly.toml at HEAD already encode the
+> fixes that came out of the first run.
 
 ## Pre-flight (5 min)
 
