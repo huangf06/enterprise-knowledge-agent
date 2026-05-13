@@ -7,6 +7,7 @@ from typing import Any, AsyncIterator
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 from sse_starlette.sse import EventSourceResponse
 
@@ -66,17 +67,69 @@ def _initial_state(body: QueryBody, user: User) -> dict[str, Any]:
     }
 
 
+_ROOT_HTML = """<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Enterprise Knowledge Agent</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      max-width:720px;margin:48px auto;padding:0 16px;color:#222;line-height:1.55}
+ h1{margin-bottom:.2em} code{background:#f4f4f4;padding:.1em .3em;border-radius:3px}
+ pre{background:#f4f4f4;padding:12px;border-radius:4px;overflow-x:auto;font-size:13px}
+ a{color:#3949ab} ul{padding-left:1.2em} .note{color:#666;font-size:14px}
+</style>
+</head>
+<body>
+<h1>Enterprise Knowledge Agent</h1>
+<p>Production-grade open-source cross-source agentic reasoning over six SaaS
+surfaces (Slack / Jira / Calendar / GitHub / GDocs / Email) with auditable
+governance and a self-authored 30-scenario eval.</p>
+<p class="note">All data is synthetic and byte-deterministic from
+<code>seed=42</code> &mdash; no real customer data, no PII. Governance is a
+pattern demo over synthetic identity, not Okta/Azure AD federation.</p>
+<h3>Endpoints</h3>
+<ul>
+ <li><code>GET /health</code> &mdash; liveness probe</li>
+ <li><code>GET /users</code> &mdash; list of 30 synthetic users (name / role / department / office)</li>
+ <li><code>POST /query</code> &mdash; SSE stream of agent events
+     (<code>plan / tool_select / tool_execute / reflect / synthesize</code>)</li>
+</ul>
+<h3>Try it</h3>
+<pre>curl -N -X POST https://enterprise-knowledge-agent.fly.dev/query \\
+  -H 'Content-Type: application/json' \\
+  -d '{"query":"What is on my calendar today?","user_name":"Sarah Chen","user_role":"manager"}'</pre>
+<h3>Links</h3>
+<ul>
+ <li>Repo: <a href="https://github.com/huangf06/enterprise-knowledge-agent">github.com/huangf06/enterprise-knowledge-agent</a></li>
+ <li>Docs: <a href="https://huangf06.github.io/enterprise-knowledge-agent/">huangf06.github.io/enterprise-knowledge-agent/</a></li>
+</ul>
+</body></html>
+"""
+
+
+@api.get("/", response_class=HTMLResponse)
+def root() -> HTMLResponse:
+    return HTMLResponse(content=_ROOT_HTML)
+
+
 @api.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
 @api.get("/users")
-def users() -> list[dict[str, str]]:
-    return [
-        {"name": u.name, "role": u.role, "department": u.department, "office": u.office}
-        for u in load_users()
-    ]
+def users() -> dict[str, Any]:
+    return {
+        "synthetic_data": True,
+        "note": "Byte-deterministic from seed=42. No real customer data, no PII.",
+        "count": 30,
+        "users": [
+            {"name": u.name, "role": u.role, "department": u.department, "office": u.office}
+            for u in load_users()
+        ],
+    }
 
 
 @api.post("/query")

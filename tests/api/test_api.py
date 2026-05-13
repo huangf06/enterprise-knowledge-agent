@@ -16,9 +16,19 @@ def test_health():
 def test_users_list_includes_sarah():
     r = _client().get("/users")
     assert r.status_code == 200
-    names = {u["name"] for u in r.json()}
+    body = r.json()
+    assert body["synthetic_data"] is True
+    names = {u["name"] for u in body["users"]}
     assert "Sarah Chen" in names
     assert len(names) == 30
+
+
+def test_root_returns_html_landing_page():
+    r = _client().get("/")
+    assert r.status_code == 200
+    assert r.headers["content-type"].startswith("text/html")
+    assert "Enterprise Knowledge Agent" in r.text
+    assert "synthetic" in r.text.lower()
 
 
 def test_query_unknown_user_returns_404():
