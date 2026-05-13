@@ -14,6 +14,7 @@ __pycache__/
 .ruff_cache/
 
 eval_results/runs/
+eval_results/cost_ledger.sqlite
 
 notebooks/.ipynb_checkpoints/
 

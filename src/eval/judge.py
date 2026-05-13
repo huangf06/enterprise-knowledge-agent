@@ -76,7 +76,7 @@ def judge(scenario: Scenario, answer: str, actual_sources: list[str]) -> dict[st
         expected_action=scenario.expected_action,
         answer=answer,
     )
-    resp = messages_create(messages=[{"role": "user", "content": prompt}], max_tokens=1024)
+    resp = messages_create(messages=[{"role": "user", "content": prompt}], max_tokens=1024, node="judge")
     text = "\n".join(b.text for b in resp.content if b.type == "text")
     parsed = _extract_json(text)
     if parsed is None:

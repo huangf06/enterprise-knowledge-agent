@@ -68,7 +68,7 @@ def _llm_short_answer(question: str, passages: list[str]) -> str:
         question=question,
         passages="\n\n".join(f"({i + 1}) {p}" for i, p in enumerate(passages)),
     )
-    resp = messages_create(messages=[{"role": "user", "content": prompt}], max_tokens=128)
+    resp = messages_create(messages=[{"role": "user", "content": prompt}], max_tokens=128, node="retrieval_sanity")
     return " ".join(b.text for b in resp.content if b.type == "text").strip()
 
 

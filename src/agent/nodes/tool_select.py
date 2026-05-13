@@ -39,6 +39,7 @@ def tool_select_node(state: AgentState) -> dict[str, Any]:
         messages=[{"role": "user", "content": prompt}],
         tools=registry().schemas(),
         max_tokens=2048,
+        node="tool_select",
     )
 
     tool_use_blocks = [b for b in resp.content if b.type == "tool_use"]

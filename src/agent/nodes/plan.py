@@ -32,7 +32,7 @@ def plan_node(state: AgentState) -> dict[str, Any]:
         tool_summary=_tool_summary(),
         today=str(date(2026, 5, 11)),
     )
-    resp = messages_create(messages=[{"role": "user", "content": prompt}], max_tokens=1024)
+    resp = messages_create(messages=[{"role": "user", "content": prompt}], max_tokens=1024, node="plan")
     plan_text = "\n".join(b.text for b in resp.content if b.type == "text").strip()
     return {
         "plan": plan_text or "(no plan emitted, proceeding heuristically)",

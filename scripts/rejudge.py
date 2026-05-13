@@ -20,6 +20,17 @@ from src.eval.judge import judge  # noqa: E402
 RUNS = REPO_ROOT / "eval_results" / "runs"
 
 
+def _pct(values: list[float], p: float) -> float:
+    if not values:
+        return 0.0
+    s = sorted(values)
+    k = (len(s) - 1) * p
+    lo = int(k)
+    hi = min(lo + 1, len(s) - 1)
+    frac = k - lo
+    return s[lo] * (1 - frac) + s[hi] * frac
+
+
 def _summarize(rows: list[dict]) -> dict:
     if not rows:
         return {"count": 0}
@@ -35,7 +46,36 @@ def _summarize(rows: list[dict]) -> dict:
         vals = [r["scores"].get(m, 0.0) for r in rows]
         averages[m] = round(sum(vals) / len(vals), 4)
     averages["avg_tool_calls"] = round(sum(r["tool_calls"] for r in rows) / len(rows), 2)
-    averages["avg_elapsed_s"] = round(sum(r["elapsed_s"] for r in rows) / len(rows), 2)
+
+    latencies = [r["elapsed_s"] for r in rows]
+    averages["avg_elapsed_s"] = round(sum(latencies) / len(latencies), 2)
+    averages["p50_elapsed_s"] = round(_pct(latencies, 0.50), 2)
+    averages["p95_elapsed_s"] = round(_pct(latencies, 0.95), 2)
+
+    agent_costs = [r.get("agent_usage", {}).get("cost_usd", 0.0) for r in rows]
+    averages["agent_cost_usd_total"] = round(sum(agent_costs), 6)
+    averages["agent_cost_usd_per_query"] = round(sum(agent_costs) / len(rows), 6)
+    averages["p50_agent_cost_usd"] = round(_pct(agent_costs, 0.50), 6)
+    averages["p95_agent_cost_usd"] = round(_pct(agent_costs, 0.95), 6)
+
+    per_node_totals: dict[str, dict] = {}
+    for r in rows:
+        for node, agg in r.get("agent_usage", {}).get("per_node", {}).items():
+            entry = per_node_totals.setdefault(
+                node,
+                {"calls": 0, "input_tokens": 0, "output_tokens": 0, "cost_usd": 0.0},
+            )
+            entry["calls"] += agg.get("calls", 0)
+            entry["input_tokens"] += agg.get("input_tokens", 0)
+            entry["output_tokens"] += agg.get("output_tokens", 0)
+            entry["cost_usd"] += agg.get("cost_usd", 0.0)
+    for entry in per_node_totals.values():
+        entry["cost_usd"] = round(entry["cost_usd"], 6)
+    averages["per_node_agent"] = per_node_totals
+
+    judge_costs = [r.get("judge_usage", {}).get("cost_usd", 0.0) for r in rows]
+    averages["judge_cost_usd_total"] = round(sum(judge_costs), 6)
+
     averages["count"] = len(rows)
     return averages
 

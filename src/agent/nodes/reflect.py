@@ -35,7 +35,7 @@ def reflect_node(state: AgentState) -> dict[str, Any]:
         iteration=iteration,
         max_iterations=max_iter,
     )
-    resp = messages_create(messages=[{"role": "user", "content": prompt}], max_tokens=256)
+    resp = messages_create(messages=[{"role": "user", "content": prompt}], max_tokens=256, node="reflect")
     verdict_text = " ".join(b.text for b in resp.content if b.type == "text").strip().upper()
     finished = verdict_text.startswith("YES")
     events.append({"type": "reflect", "verdict": verdict_text})

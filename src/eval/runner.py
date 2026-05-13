@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import time
+from datetime import datetime, timezone
 from typing import Any
 
 from src.agent import app
 from src.data.entity_consistency import load_users
 from src.eval.judge import judge
 from src.eval.scenarios import Scenario
+from src.llm.cost_ledger import query_window
 
 
 def _user_state(scenario: Scenario) -> dict[str, Any]:
@@ -35,6 +37,7 @@ def _user_state(scenario: Scenario) -> dict[str, Any]:
 
 def run_scenario(scenario: Scenario) -> dict[str, Any]:
     state = _user_state(scenario)
+    agent_start_iso = datetime.now(timezone.utc).isoformat()
     started = time.time()
     try:
         result = app().invoke(state, config={"recursion_limit": 40})
@@ -45,9 +48,12 @@ def run_scenario(scenario: Scenario) -> dict[str, Any]:
         answer = f"AGENT ERROR: {exc}"
         tool_history = []
         ok = False
-    elapsed = time.time() - started
+    agent_elapsed = time.time() - started
+    agent_end_iso = datetime.now(timezone.utc).isoformat()
+    agent_usage = query_window(agent_start_iso, agent_end_iso)
 
     actual_sources = sorted({t["tool"] for t in tool_history})
+    judge_start_iso = datetime.now(timezone.utc).isoformat()
     scores = judge(scenario, answer, actual_sources) if ok else {
         "answer_correctness": 0.0,
         "completeness": 0.0,
@@ -55,6 +61,8 @@ def run_scenario(scenario: Scenario) -> dict[str, Any]:
         "governance_compliance": 1.0,  # no leak if agent errored
         "action_recommend_quality": 0.0,
     }
+    judge_end_iso = datetime.now(timezone.utc).isoformat()
+    judge_usage = query_window(judge_start_iso, judge_end_iso)
 
     return {
         "scenario_id": scenario.id,
@@ -65,5 +73,7 @@ def run_scenario(scenario: Scenario) -> dict[str, Any]:
         "tool_calls": len(tool_history),
         "tools_used": actual_sources,
         "scores": scores,
-        "elapsed_s": round(elapsed, 2),
+        "elapsed_s": round(agent_elapsed, 2),
+        "agent_usage": agent_usage,
+        "judge_usage": judge_usage,
     }

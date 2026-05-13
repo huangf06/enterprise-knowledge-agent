@@ -15,6 +15,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
 
 PRICE_INPUT_PER_TOKEN = 0.14 / 1_000_000
 PRICE_CACHED_PER_TOKEN = 0.014 / 1_000_000
@@ -85,4 +86,41 @@ def totals() -> dict[str, float | int]:
         "cached_input_tokens": row[2] or 0,
         "output_tokens": row[3] or 0,
         "cost_usd": round(row[4] or 0.0, 6),
+    }
+
+
+def query_window(start_iso: str, end_iso: str) -> dict[str, Any]:
+    """Aggregate usage in a [start, end] timestamp window, broken down by node."""
+    with _conn() as conn:
+        rows = conn.execute(
+            "SELECT node, COUNT(*), SUM(input_tokens), SUM(cached_input_tokens), SUM(output_tokens), SUM(cost_usd) "
+            "FROM usage WHERE ts >= ? AND ts <= ? GROUP BY node",
+            (start_iso, end_iso),
+        ).fetchall()
+    per_node: dict[str, dict[str, float | int]] = {}
+    total_calls = 0
+    total_in = 0
+    total_cached = 0
+    total_out = 0
+    total_cost = 0.0
+    for node, calls, in_tok, cached_tok, out_tok, cost in rows:
+        per_node[node] = {
+            "calls": calls or 0,
+            "input_tokens": in_tok or 0,
+            "cached_input_tokens": cached_tok or 0,
+            "output_tokens": out_tok or 0,
+            "cost_usd": round(cost or 0.0, 6),
+        }
+        total_calls += calls or 0
+        total_in += in_tok or 0
+        total_cached += cached_tok or 0
+        total_out += out_tok or 0
+        total_cost += cost or 0.0
+    return {
+        "per_node": per_node,
+        "calls": total_calls,
+        "input_tokens": total_in,
+        "cached_input_tokens": total_cached,
+        "output_tokens": total_out,
+        "cost_usd": round(total_cost, 6),
     }

@@ -21,6 +21,8 @@ from typing import Any
 import anthropic
 from dotenv import load_dotenv
 
+from src.llm.cost_ledger import Usage, record
+
 load_dotenv()
 
 
@@ -65,6 +67,7 @@ def messages_create(
     max_tokens: int = 4096,
     temperature: float | None = None,
     tool_choice: dict[str, Any] | None = None,
+    node: str = "unknown",
 ) -> anthropic.types.Message:
     client = get_client()
     kwargs: dict[str, Any] = {
@@ -80,7 +83,17 @@ def messages_create(
         kwargs["tool_choice"] = tool_choice
     if temperature is not None:
         kwargs["temperature"] = temperature
-    return client.messages.create(**kwargs)
+    resp = client.messages.create(**kwargs)
+    usage = resp.usage
+    record(
+        node,
+        Usage(
+            input_tokens=getattr(usage, "input_tokens", 0) or 0,
+            cached_input_tokens=getattr(usage, "cache_read_input_tokens", 0) or 0,
+            output_tokens=getattr(usage, "output_tokens", 0) or 0,
+        ),
+    )
+    return resp
 
 
 def messages_stream(

@@ -27,7 +27,7 @@ def synthesize_node(state: AgentState) -> dict[str, Any]:
         plan=state.get("plan", ""),
         tool_history=_format_history(state.get("tool_history", [])),
     )
-    resp = messages_create(messages=[{"role": "user", "content": prompt}], max_tokens=4096)
+    resp = messages_create(messages=[{"role": "user", "content": prompt}], max_tokens=4096, node="synthesize")
     final_text = "\n".join(b.text for b in resp.content if b.type == "text").strip()
     events = list(state.get("streaming_events", [])) + [{"type": "synthesize", "text": final_text}]
     return {"final_answer": final_text, "streaming_events": events}
