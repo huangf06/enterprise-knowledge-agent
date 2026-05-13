@@ -19,6 +19,15 @@ Production-grade open-source enterprise knowledge agent. Cross-source agentic re
 - Retrieval ablation: [a1_retrieval_ablation.md](a1_retrieval_ablation.md)
 - Citation groundedness metric: [f4_citation_groundedness.md](f4_citation_groundedness.md)
 
+## Frontier ablations
+
+Every frontier technique ships with a with-vs-without table.
+
+- Self-Refine: [frontier3_self_refine.md](frontier3_self_refine.md) — honest negative; -0.05 to -0.08 on core metrics
+- DSPy compile + wire: [sprint4_dspy_result.md](sprint4_dspy_result.md) + [sprint4_dspy_agent_ablation.md](sprint4_dspy_agent_ablation.md) — honest negative on production metrics
+- MoE synthesize Pareto: [sprint5_moe_pareto.md](sprint5_moe_pareto.md) — cost / quality trade-off across 4 vendors
+- Counterfactual robustness: [sprint6_counterfactual_result.md](sprint6_counterfactual_result.md) — governance held under perturbation
+
 ## Honesty calibration
 
 Per v4.1 plan section *Honesty calibration policy*, every published leaderboard number ships with a "with vs without" ablation. The project is built solo with Claude Code + Codex CLI pair-programming; design decisions, architecture, and trade-offs are mine, code execution is paired.

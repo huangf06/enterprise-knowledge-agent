@@ -117,7 +117,11 @@ def main() -> int:
     print("Judge API cost (this run):")
     for p, c in out["judge_cost_usd"].items():
         print(f"  {p}: ${c}")
-    print(f"\nsaved: {out_path.relative_to(REPO_ROOT)}")
+    try:
+        rel = out_path.resolve().relative_to(REPO_ROOT.resolve())
+        print(f"\nsaved: {rel}")
+    except ValueError:
+        print(f"\nsaved: {out_path}")
     return 0
 
 

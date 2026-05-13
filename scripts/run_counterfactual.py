@@ -92,7 +92,21 @@ def main() -> int:
         help=f"Comma-separated perturbation modes. Default: {','.join(PERTURBATIONS)}",
     )
     p.add_argument("--limit", type=int, default=None, help="Process only the first N scenarios.")
+    p.add_argument(
+        "--tier",
+        choices=("smoke", "fast", "full"),
+        default=None,
+        help="A5 3-tier preset (filters by scenario_id). Overrides --limit.",
+    )
     args = p.parse_args()
+    FAST_IDS = {
+        "brief-003", "brief-008",
+        "decision-003", "decision-005",
+        "qa-003", "qa-006",
+        "conflict-001", "conflict-003",
+        "multi-002", "multi-003",
+    }
+    SMOKE_IDS = {"brief-003", "conflict-001", "qa-003"}
 
     modes = [m.strip() for m in args.modes.split(",") if m.strip()]
     for m in modes:
@@ -102,7 +116,11 @@ def main() -> int:
     baseline_path = Path(args.baseline)
     data = json.loads(baseline_path.read_text())
     base_rows = data["rows"]
-    if args.limit is not None:
+    if args.tier == "fast":
+        base_rows = [r for r in base_rows if r["scenario_id"] in FAST_IDS]
+    elif args.tier == "smoke":
+        base_rows = [r for r in base_rows if r["scenario_id"] in SMOKE_IDS]
+    elif args.limit is not None:
         base_rows = base_rows[: args.limit]
 
     scenarios = {s.id: s for s in load_scenarios()}

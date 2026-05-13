@@ -129,13 +129,39 @@ prompt's open-ended rubric score of 0.69 (different scales, but the relative
 improvement is real). The DSPy infrastructure is not the problem; signature
 care is.
 
-## Per v4.1 P15 — dual judge regime addendum (multi-judge running)
+## Per v4.1 P15 — dual judge regime addendum
 
-Multi-judge consensus (`scripts/run_multi_judge.py`) gives both the 2-judge
-regime (Anthropic Haiku + OpenAI gpt-4o-mini, the DSPy training metric per
-N1) and the 3-judge regime (+ DeepSeek, the comparison metric used by every
-other v4 ablation). Numbers will be inserted here when the multi-judge job
-completes.
+Multi-judge consensus over the same 10 fast-tier scenarios, both regimes:
+
+| Metric | OFF 3-judge | ON 3-judge | Δ 3J | OFF 2-judge | ON 2-judge | Δ 2J |
+|---|---:|---:|---:|---:|---:|---:|
+| answer_correctness | 0.8550 | 0.8250 | **-0.0300** | 0.8250 | 0.8750 | **+0.0500** |
+| completeness | 0.8300 | 0.8800 | +0.0500 | 0.8025 | 0.8575 | +0.0550 |
+| tool_selection_quality | 0.8290 | 0.8500 | +0.0210 | 0.7905 | 0.7995 | +0.0090 |
+| governance_compliance | 1.0000 | 1.0000 | 0.0000 | 1.0000 | 1.0000 | 0.0000 |
+| action_recommend_quality | 0.5500 | 0.5000 | -0.0500 | 0.5825 | 0.4550 | **-0.1275** |
+
+**Critical finding**: the 2-judge regime (Anthropic Haiku + OpenAI gpt-4o-mini,
+the metric DSPy was trained against per N1) shows **answer_correctness +0.05**.
+The 3-judge regime (adding DeepSeek, the comparison metric used by every
+other v4 ablation) shows **answer_correctness -0.03**. The compiled prompt's
+correctness lift is a Goodhart effect: DSPy optimized against a metric that
+excluded the agent's own model class, and adding it back flips the sign of
+the headline delta.
+
+This is exactly the failure mode that v4.1 N1 + P15 were designed to surface.
+Without dual-regime reporting, this ablation would publish "+0.05 lift,
+ship!" — and the production single-judge eval would later contradict it.
+
+action_recommend_quality regresses in both regimes; the citation-format
+regression (cite_source_coverage -1.0) is independent of judge regime since
+it is computed algorithmically from the answer text, not by the LLM judges.
+
+Source files:
+- OFF: `eval_results/runs/eval-20260513-105857-multijudge.json` (filtered to 10 fast-tier IDs)
+- ON:  `eval_results/runs/eval-20260513-122128-multijudge.json`
+
+Multi-judge API spend this run: $0.083 (Anthropic $0.064 + OpenAI $0.004 for OFF + same for ON, DeepSeek $0 as it uses the project's primary key).
 
 ## Reproducibility
 

@@ -55,9 +55,19 @@ nav:
       - N2 cost/latency baseline: n2_baseline.md
       - A1 retrieval ablation: a1_retrieval_ablation.md
       - F4 citation groundedness: f4_citation_groundedness.md
+  - Frontier ablations:
+      - Self-Refine (Madaan 2023): frontier3_self_refine.md
+      - DSPy compilation: sprint4_dspy_result.md
+      - DSPy agent-level ablation: sprint4_dspy_agent_ablation.md
+      - MoE synthesize Pareto: sprint5_moe_pareto.md
+      - Counterfactual robustness: sprint6_counterfactual_result.md
+  - Sessions:
+      - Overnight report (1st autonomous): overnight-report.md
+      - Morning report v2 (2nd autonomous): morning-report-v2.md
   - Demo and deploy:
       - Demo script: demo-script.md
       - Deploy guide: deploy.md
+      - Deploy checklist (handoff): deploy-checklist.md
       - HR Helpdesk case study: case-study-hr-helpdesk.md
   - History:
       - Status: STATUS.md
