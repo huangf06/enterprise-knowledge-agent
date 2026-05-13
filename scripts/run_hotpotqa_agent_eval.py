@@ -108,6 +108,12 @@ def main() -> int:
         default=10,
         help="Print a progress line every N examples.",
     )
+    parser.add_argument(
+        "--checkpoint-every",
+        type=int,
+        default=10,
+        help="Write a partial result JSON every N examples (alongside the final file).",
+    )
     args = parser.parse_args()
 
     os.environ.setdefault("SELF_REFINE_ENABLED", "0")
@@ -177,6 +183,22 @@ def main() -> int:
                 f"avg_elapsed={running['avg_elapsed_s']:.1f}s "
                 f"cum_cost=${cumulative_cost:.4f}",
                 flush=True,
+            )
+
+        if i % args.checkpoint_every == 0 and i != len(examples):
+            ckpt_summary = _aggregate(rows)
+            ckpt_summary["total_wallclock_s"] = round(time.time() - started_wall, 2)
+            ckpt_summary["partial"] = True
+            ckpt_summary["started_iso"] = started_iso
+            ckpt_summary["config"] = {
+                "n_requested": args.n,
+                "n_run": len(rows),
+                "top_k": args.top_k,
+                "max_iterations": args.max_iterations,
+                "limit_cost_usd": args.limit_cost_usd,
+            }
+            out_path.write_text(
+                json.dumps({"summary": ckpt_summary, "rows": rows}, indent=2)
             )
 
         if cumulative_cost > args.limit_cost_usd:
