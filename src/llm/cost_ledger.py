@@ -6,10 +6,17 @@ DeepSeek V4 Pro pricing (cache-aware tokens via Anthropic-compatible endpoint):
   output : $0.28 / 1M tokens
 
 These match DeepSeek's published rates as of 2026-05; update as needed.
+
+Process isolation (v4.1 fix 2026-05-13): every row carries the writer's PID so
+concurrent eval runs (e.g. Self-Refine ON vs OFF ablation) do not cross-
+contaminate each other's per-scenario time-window queries. The default
+`query_window` filters by the calling process's PID; pass `pid=None` for
+analysis tools that want the whole ledger.
 """
 
 from __future__ import annotations
 
+import os
 import sqlite3
 from contextlib import contextmanager
 from dataclasses import dataclass
@@ -22,6 +29,8 @@ PRICE_CACHED_PER_TOKEN = 0.014 / 1_000_000
 PRICE_OUTPUT_PER_TOKEN = 0.28 / 1_000_000
 
 LEDGER_PATH = Path(__file__).resolve().parents[2] / "eval_results" / "cost_ledger.sqlite"
+
+_SENTINEL_NO_PID = object()
 
 
 @dataclass(frozen=True)
@@ -39,6 +48,13 @@ class Usage:
         )
 
 
+def _ensure_pid_column(conn: sqlite3.Connection) -> None:
+    """Migrate pre-pid ledgers in place. Idempotent."""
+    cols = {row[1] for row in conn.execute("PRAGMA table_info(usage)").fetchall()}
+    if "pid" not in cols:
+        conn.execute("ALTER TABLE usage ADD COLUMN pid INTEGER")
+
+
 @contextmanager
 def _conn():
     LEDGER_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -51,9 +67,11 @@ def _conn():
                 input_tokens INTEGER,
                 cached_input_tokens INTEGER,
                 output_tokens INTEGER,
-                cost_usd REAL
+                cost_usd REAL,
+                pid INTEGER
             )"""
         )
+        _ensure_pid_column(conn)
         yield conn
         conn.commit()
     finally:
@@ -63,7 +81,8 @@ def _conn():
 def record(node: str, usage: Usage) -> None:
     with _conn() as conn:
         conn.execute(
-            "INSERT INTO usage VALUES (?, ?, ?, ?, ?, ?)",
+            "INSERT INTO usage(ts, node, input_tokens, cached_input_tokens, output_tokens, cost_usd, pid) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?)",
             (
                 datetime.now(timezone.utc).isoformat(),
                 node,
@@ -71,6 +90,7 @@ def record(node: str, usage: Usage) -> None:
                 usage.cached_input_tokens,
                 usage.output_tokens,
                 usage.cost_usd,
+                os.getpid(),
             ),
         )
 
@@ -89,14 +109,35 @@ def totals() -> dict[str, float | int]:
     }
 
 
-def query_window(start_iso: str, end_iso: str) -> dict[str, Any]:
-    """Aggregate usage in a [start, end] timestamp window, broken down by node."""
+def query_window(
+    start_iso: str,
+    end_iso: str,
+    pid: int | None | object = _SENTINEL_NO_PID,
+) -> dict[str, Any]:
+    """Aggregate usage in a [start, end] timestamp window, broken down by node.
+
+    pid semantics:
+      - default (sentinel): filter to current process's pid (the usual runner case)
+      - explicit int: filter to that pid (debugging / analysis)
+      - explicit None: no pid filter (analysis over whole ledger)
+    """
+    if pid is _SENTINEL_NO_PID:
+        pid_filter: int | None = os.getpid()
+    else:
+        pid_filter = pid  # type: ignore[assignment]
+
+    sql = (
+        "SELECT node, COUNT(*), SUM(input_tokens), SUM(cached_input_tokens), SUM(output_tokens), SUM(cost_usd) "
+        "FROM usage WHERE ts >= ? AND ts <= ?"
+    )
+    params: list[Any] = [start_iso, end_iso]
+    if pid_filter is not None:
+        sql += " AND pid = ?"
+        params.append(pid_filter)
+    sql += " GROUP BY node"
+
     with _conn() as conn:
-        rows = conn.execute(
-            "SELECT node, COUNT(*), SUM(input_tokens), SUM(cached_input_tokens), SUM(output_tokens), SUM(cost_usd) "
-            "FROM usage WHERE ts >= ? AND ts <= ? GROUP BY node",
-            (start_iso, end_iso),
-        ).fetchall()
+        rows = conn.execute(sql, params).fetchall()
     per_node: dict[str, dict[str, float | int]] = {}
     total_calls = 0
     total_in = 0
