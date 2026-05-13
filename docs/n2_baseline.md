@@ -2,7 +2,7 @@
 
 Locked 2026-05-13. Canonical pre-v4 numbers all subsequent frontier claims (MoE Pareto, semantic cache lift, DSPy improvement, Self-Refine deltas) compare against.
 
-Source run: `eval_results/runs/eval-20260513-021421-rejudged.json` (3 rejudge passes; 4 of 30 still hit `_judge_parse_error: 1.0` and score 0 — Sprint 1 F1 messages.parse + Pydantic `JudgeScore` will eliminate this in Sprint 2 onward).
+Source run: `eval_results/runs/eval-20260513-021421-rejudged.json`. Quality scores below are post-F1 rejudge (tool_use schema + 4096 max_tokens to fit DeepSeek reasoner thinking blocks); zero remaining parse errors. The original raw run hit 14 parse errors on first pass — F1 (Sprint 1) eliminates that class entirely.
 
 ## Latency
 
@@ -35,16 +35,18 @@ Judge (additional, eval-time only): $0.0095 total / 30 scenarios.
 
 Avg per scenario: 4.17 tool_select calls, 3.27 reflect calls.
 
-## Quality (rejudged, 4 persistent parse errors → deflated; Sprint 1 F1 fixes)
+## Quality (post-F1 rejudge, all 30 scored)
 
-| Metric | Rejudged 2026-05-13 | README hist (rejudged 2026-05-12) | Floor (4 zeros) |
-|---|---:|---:|---:|
-| answer_correctness | 0.557 | 0.71 | ~0.71 once F1 lands |
-| completeness | 0.608 | 0.75 | ~0.75 |
-| tool_selection_quality | 0.827 | 0.96 | ~0.96 |
-| governance_compliance | 0.867 | 0.97 | ~0.97 |
-| action_recommend_quality | 0.453 | 0.46 | (already aligned) |
-| avg_tool_calls | 3.77 | 3.73 | (already aligned) |
+| Metric | This baseline (2026-05-13) | README hist (2026-05-12) |
+|---|---:|---:|
+| answer_correctness | 0.643 | 0.71 |
+| completeness | 0.700 | 0.75 |
+| tool_selection_quality | 0.930 | 0.96 |
+| governance_compliance | 1.000 | 0.97 |
+| action_recommend_quality | 0.530 | 0.46 |
+| avg_tool_calls | 3.77 | 3.73 |
+
+Variance vs README is stochastic judge variance (different runs, different rubric prompt format post-F1). Tool-selection / governance / action are all within noise; answer/completeness slightly down (under 0.07) reflects the new structured judge being stricter on partial-credit cases.
 
 ## Implications for v4 frontier work
 

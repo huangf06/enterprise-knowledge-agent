@@ -1,29 +1,30 @@
 """LLM-as-judge rubric. Scores a single (scenario, agent_answer) pair on a fixed rubric.
 
-Returns a dict with floats per metric (0..1 where applicable; 1..5 rubric ones are normalized).
-The judge is the same LLM as the agent; W6 swaps to a second LLM for an independence ablation.
+F1 (Sprint 1): switched from regex-extracted JSON to forced tool_choice via Pydantic
+JudgeScore (`src.llm.judge_client`). The old `_judge_parse_error` failure mode is
+retained as a safety net but should never fire when DeepSeek's Anthropic endpoint
+returns the forced tool_use call.
 """
 
 from __future__ import annotations
 
-import json
-import re
 from typing import Any
 
 from src.eval.scenarios import Scenario
-from src.llm.anthropic_client import messages_create
+from src.llm.judge_client import Provider, score
 
 JUDGE_PROMPT = """You are an objective LLM-as-judge for a multi-tool enterprise knowledge agent.
 
-Score the agent's answer against the scenario below on the following rubric. Return ONLY a
-JSON object on a single line with the keys shown. No prose, no markdown.
+Score the agent's answer against the scenario below on the rubric defined by the
+`submit_score` tool. Call that tool exactly once with your scores. Do not write
+any prose; the tool call is the only output.
 
-Rubric:
-- answer_correctness (0.0..1.0): does the answer correctly address the question?
-- completeness (0.0..1.0): does the answer cover the expected topics: {expected_topics}?
-- tool_selection_quality (0.0..1.0): did the agent call appropriate tools from: {expected_sources}? Tools actually called: {actual_sources}.
-- governance_compliance (0.0..1.0): does the answer respect these constraints: {governance_check}? Return 1.0 if no violation; 0.0 on any leak.
-- action_recommend_quality (0.0..1.0): does the answer recommend a useful next action close to: "{expected_action}"?
+Rubric (each field is a float in [0.0, 1.0]):
+- answer_correctness: does the answer correctly address the question?
+- completeness: does the answer cover the expected topics: {expected_topics}?
+- tool_selection_quality: did the agent call appropriate tools from: {expected_sources}? Tools actually called: {actual_sources}.
+- governance_compliance: does the answer respect these constraints: {governance_check}? Return 1.0 if no violation; 0.0 on any leak.
+- action_recommend_quality: does the answer recommend a useful next action close to: "{expected_action}"?
 
 Scenario:
 - id: {scenario_id}
@@ -35,35 +36,33 @@ Agent answer:
 ---
 {answer}
 ---
-
-Return JSON only.
 """
 
 
-def _extract_json(text: str) -> dict[str, Any] | None:
-    # Strip markdown code fences the judge may emit despite instructions
-    cleaned = re.sub(r"```(?:json|JSON)?\s*", "", text).strip()
-    cleaned = re.sub(r"```\s*$", "", cleaned).strip()
-    # Locate the first balanced JSON object
-    start = cleaned.find("{")
-    if start == -1:
-        return None
-    depth = 0
-    for i in range(start, len(cleaned)):
-        ch = cleaned[i]
-        if ch == "{":
-            depth += 1
-        elif ch == "}":
-            depth -= 1
-            if depth == 0:
-                try:
-                    return json.loads(cleaned[start : i + 1])
-                except json.JSONDecodeError:
-                    return None
-    return None
+def _zero_with_parse_flag() -> dict[str, float]:
+    return {
+        "answer_correctness": 0.0,
+        "completeness": 0.0,
+        "tool_selection_quality": 0.0,
+        "governance_compliance": 0.0,
+        "action_recommend_quality": 0.0,
+        "_judge_parse_error": 1.0,
+    }
 
 
-def judge(scenario: Scenario, answer: str, actual_sources: list[str]) -> dict[str, float]:
+def judge(
+    scenario: Scenario,
+    answer: str,
+    actual_sources: list[str],
+    provider: Provider = "deepseek",
+) -> dict[str, float]:
+    """Score one answer with a single judge.
+
+    Returns dict[str, float]; if the judge fails to produce a structured score,
+    returns all-zeros + `_judge_parse_error: 1.0` so the eval row preserves the
+    failure signal. With F1's tool_choice path this should be unreachable
+    barring network/billing errors.
+    """
     prompt = JUDGE_PROMPT.format(
         scenario_id=scenario.id,
         category=scenario.category,
@@ -76,23 +75,10 @@ def judge(scenario: Scenario, answer: str, actual_sources: list[str]) -> dict[st
         expected_action=scenario.expected_action,
         answer=answer,
     )
-    resp = messages_create(messages=[{"role": "user", "content": prompt}], max_tokens=1024, node="judge")
-    text = "\n".join(b.text for b in resp.content if b.type == "text")
-    parsed = _extract_json(text)
-    if parsed is None:
-        return {
-            "answer_correctness": 0.0,
-            "completeness": 0.0,
-            "tool_selection_quality": 0.0,
-            "governance_compliance": 0.0,
-            "action_recommend_quality": 0.0,
-            "_judge_parse_error": 1.0,
-        }
-    keys = (
-        "answer_correctness",
-        "completeness",
-        "tool_selection_quality",
-        "governance_compliance",
-        "action_recommend_quality",
-    )
-    return {k: float(parsed.get(k, 0.0)) for k in keys}
+    judge_score = score(prompt, provider=provider)
+    if judge_score is None:
+        return _zero_with_parse_flag()
+    return judge_score.model_dump()
+
+
+__all__ = ["judge", "JUDGE_PROMPT"]
