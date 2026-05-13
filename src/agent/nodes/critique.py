@@ -15,7 +15,7 @@ from typing import Any
 
 from src.agent.prompts import render
 from src.agent.state import AgentState
-from src.llm.anthropic_client import get_client, model_id
+from src.llm.anthropic_client import messages_create
 
 CRITIQUE_TOOL = {
     "name": "submit_critique",
@@ -71,12 +71,11 @@ def critique_node(state: AgentState) -> dict[str, Any]:
         }
 
     prompt = render("critique", query=state["query"], answer=answer)
-    client = get_client()
-    resp = client.messages.create(
-        model=model_id(),
-        max_tokens=4096,
-        tools=[CRITIQUE_TOOL],
+    resp = messages_create(
         messages=[{"role": "user", "content": prompt}],
+        tools=[CRITIQUE_TOOL],
+        max_tokens=4096,
+        node="critique",
     )
     tool_uses = [b for b in resp.content if b.type == "tool_use" and b.name == "submit_critique"]
     if not tool_uses:
