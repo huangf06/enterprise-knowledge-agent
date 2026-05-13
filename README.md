@@ -2,6 +2,10 @@
 
 Production-grade open-source enterprise knowledge agent. Cross-source agentic reasoning over six SaaS surfaces (Slack / Jira / Calendar / GitHub / GDocs / Email) with auditable cross-source policy enforcement.
 
+Ships four frontier-technique ablations with honest with-vs-without tables (three negatives, one positive). Live deploy + Langfuse tracing + 102 / 102 tests.
+
+> All data is synthetic and byte-deterministic from `seed=42`. No real customer data, no PII. Governance is a *pattern demo* on synthetic identity, not Okta / Azure AD federation (v1.5 scope).
+
 **Live demo**: <https://enterprise-knowledge-agent.fly.dev/> · Health: `/health` · Query: `POST /query` (SSE stream)
 **Docs site**: <https://huangf06.github.io/enterprise-knowledge-agent/>
 **Observability**: every `/query` emits a Langfuse trace with per-node generations + token counts.
@@ -41,6 +45,8 @@ Reproduce: `SELF_REFINE_ENABLED=0 uv run python scripts/run_eval.py --tier full`
 
 **Adversarial governance regression: 10 / 10 blocked (100%)**. See `eval_results/adversarial.json` and `docs/w5_report.md`. Each of 10 cross-source attack vectors (RBAC bypass, role escalation, HR-doc leak, PII extraction, audit tamper, tool-result injection, cross-tenant switch, GDPR violation, markdown injection) is refused at the prompt-fence or RBAC layer before any data leaves the tool boundary.
 
+**Scope of the governance 1.00**: perfect on this 30-scenario set + 10 adversarial vectors against the synthetic-identity policy table. The known blind spot: federation across a real Slack workspace / Jira project / GitHub org permission model is **not** in scope. This is a *pattern demo*; real federation (Okta / Azure AD / SAML) is v1.5 (see `docs/governance-design.md` first paragraph).
+
 ## Frontier ablations (v4)
 
 Four frontier techniques shipped with explicit with-vs-without tables.
@@ -48,7 +54,7 @@ Four frontier techniques shipped with explicit with-vs-without tables.
 | Technique | Ablation | Verdict | Detail |
 |---|---|---|---|
 | Self-Refine (Madaan 2023) | OFF vs ON, n=30 | **OFF default**: -0.05 to -0.08 on correctness / completeness; +0.08 on source_coverage; +18% latency | [docs/frontier3_self_refine.md](docs/frontier3_self_refine.md) |
-| DSPy compilation (synthesize node) | manual prompt vs compiled, n=10 | **OFF default**: +0.05 on correctness BUT -1.0 on cite_source_coverage and -0.17 on action_recommend_quality (DSPy signature dropped the format exemplars) | [docs/sprint4_dspy_agent_ablation.md](docs/sprint4_dspy_agent_ablation.md) |
+| DSPy compilation (synthesize node) | manual prompt vs compiled, n=10 | **OFF default**: 2-judge regime (the training metric) shows +0.05 on correctness; 3-judge regime (adds back the agent's model class) flips to -0.03 — a Goodhart effect that v4.1 N1+P15 was designed to catch. Plus -1.0 on cite_source_coverage and -0.17 on action_recommend_quality. | [docs/sprint4_dspy_agent_ablation.md](docs/sprint4_dspy_agent_ablation.md) |
 | Multi-LLM MoE (synthesize routing) | 4 vendors × n=10 fast-tier | **DeepSeek default**: Sonnet 4.6 lift is +0.07 (within n=10 noise floor) at 32× cost. All four vendors lie on the Pareto frontier; default to DeepSeek with Sonnet 4.6 as opt-in per-request | [docs/sprint5_moe_pareto.md](docs/sprint5_moe_pareto.md) |
 | Counterfactual robustness | 3 perturbations × n=10 fast-tier | **Governance held at 1.00 across all perturbations**; doc_deletion drops answer_correctness to 0.0-0.3 (graceful degradation, no hallucination of removed sources) | [docs/sprint6_counterfactual_result.md](docs/sprint6_counterfactual_result.md) |
 
@@ -85,19 +91,20 @@ cp .env.example .env
 # Fill DEEPSEEK_API_KEY in .env
 docker compose up -d qdrant postgres
 uv sync --extra dev
-uv run python scripts/generate_data.py --seed 42
+uv run python scripts/generate_data.py --seed 42     # required before docker / uvicorn — synthetic data is gitignored
 uv run uvicorn src.api.main:api --reload
 # POST /query with body {"query": "...", "user_name": "Sarah Chen", "user_role": "manager"}
 # returns an SSE stream of plan / tool_select / tool_execute / reflect / synthesize events
 ```
 
-For the full container stack: `docker compose up`. Image build for the API lives at `infra/Dockerfile`.
+For the full container stack: run `generate_data.py` first, then `docker compose up`. Image build for the API lives at `infra/Dockerfile` and bakes the generated synthetic dataset into the image.
 
 ## Differentiation
 
 - **Cross-source policy engine pattern over six SaaS surfaces.** `#leadership` channel and HR-private GDocs are denied to managers via a yaml policy table and an audit log records every decision. This is a *pattern demo* on synthetic identity — production federation (Okta / Azure AD / SAML) is v1.5 scope. See `docs/governance-design.md`.
 - **Self-authored 30-scenario cross-source briefing eval, with the closed-loop risk surfaced explicitly.** LLM-judge prompt, rubric, scenarios, synthetic data, and tool outputs are all open and byte-reproducible from `seed=42`. The methodology blog (`docs/eval-methodology.md`) addresses single-author calibration head-on.
-- **Self-hostable and reproducible.** One `docker compose up` brings the entire stack up locally; no proprietary services in the loop except the LLM API. Deploy to Fly.io / HF Spaces is documented at `docs/deploy.md` (pending W7 completion).
+- **Multi-judge consensus on every published ablation, with judge-pool isolation.** Anthropic Haiku 4.5 + OpenAI gpt-4o-mini + DeepSeek judge each ablation; DSPy training metric drops DeepSeek (the agent's primary) per v4.1 N1, and the comparison metric adds it back per v4.1 P15. The DSPy ablation surfaces a real Goodhart reversal under this dual regime (see `docs/sprint4_dspy_agent_ablation.md` "Critical finding"). Most LLM portfolios single-judge; this one publishes the cross-judge dispersion.
+- **Self-hostable and reproducible.** One `docker compose up` brings the entire stack up locally; no proprietary services in the loop except the LLM API. Live on Fly.io since 2026-05-13; deploy guide at `docs/deploy.md`.
 
 ## Architecture
 
@@ -135,3 +142,13 @@ Full architecture diagram, module reuse table, and the Demo 2 modularity case st
 - `docs/` — design + eval methodology + governance + failure modes
 - `scripts/` — CLIs (generate, run_eval, run_adversarial, gates)
 - `.github/workflows/` — CI test + eval-gate + eval-nightly
+
+## Build process and attribution
+
+This project is built solo, with Claude Code + Codex CLI pair-programming. Design decisions, architecture, eval methodology, and ablation interpretation are mine; code execution and routine refactoring are paired with the LLM tools above. Every commit lands under my GitHub account with that workflow declared up-front rather than retrofitted.
+
+The "Three honest negatives" framing (Self-Refine, DSPy under 3-judge, and the Sonnet-MoE-lift-is-within-noise observation) came from running the experiments and publishing the tables as they fell — not from cherry-picking the runs that flattered the techniques. Multi-judge consensus + judge-pool isolation (v4.1 N1+P15) is what made the Goodhart reversal in the DSPy ablation visible at all.
+
+## License
+
+Apache-2.0. See [LICENSE](LICENSE).
