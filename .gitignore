@@ -15,6 +15,7 @@ __pycache__/
 
 eval_results/runs/
 eval_results/cost_ledger.sqlite
+eval_results/semantic_cache.sqlite
 
 notebooks/.ipynb_checkpoints/
 

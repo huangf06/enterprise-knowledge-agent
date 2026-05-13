@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field
 from sse_starlette.sse import EventSourceResponse
 
 from src.agent import app as build_app
+from src.agent import semantic_cache
 from src.data.entity_consistency import User, load_users
 from src.observability.langfuse_tracker import flush, get_client as _langfuse_client
 
@@ -85,6 +86,18 @@ async def query(body: QueryBody) -> EventSourceResponse:
     state = _initial_state(body, user)
 
     async def event_stream() -> AsyncIterator[dict[str, Any]]:
+        # A3 semantic cache short-circuit. Disabled by default; enable in prod via
+        # SEMANTIC_CACHE_ENABLED=1.
+        hit = semantic_cache.lookup(body.query, body.user_role)
+        if hit is not None:
+            yield {
+                "event": "cache_hit",
+                "data": json.dumps({"similarity": hit.similarity, "cached_at": hit.cached_at}),
+            }
+            yield {"event": "final", "data": json.dumps({"answer": hit.answer}, default=str)}
+            yield {"event": "done", "data": "{}"}
+            return
+
         graph = build_app()
         emitted = 0
         final = None
@@ -106,6 +119,8 @@ async def query(body: QueryBody) -> EventSourceResponse:
                         }
             yield {"event": "done", "data": "{}"}
         finally:
+            if final is not None:
+                semantic_cache.put(body.query, body.user_role, final)
             flush()
 
     return EventSourceResponse(event_stream())
