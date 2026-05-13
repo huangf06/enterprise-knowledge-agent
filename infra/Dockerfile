@@ -4,7 +4,10 @@ WORKDIR /app
 
 RUN pip install --no-cache-dir uv==0.11.8
 
-COPY pyproject.toml uv.lock /app/
+# pyproject.toml has `readme = "README.md"`, so hatchling needs the README in
+# the build context when `uv sync` installs the local package. Copy it now
+# even though it changes more often than the lockfile; it is small.
+COPY pyproject.toml uv.lock README.md /app/
 RUN uv sync --no-dev --frozen
 
 COPY src /app/src
