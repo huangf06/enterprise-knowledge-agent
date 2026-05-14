@@ -24,13 +24,16 @@
 - 30 self-authored cross-source scenarios (`data/eval/scenarios.json`)
 - 10 adversarial governance scenarios (`data/eval/adversarial.json`)
 - 5 HR helpdesk Demo 2 scenarios (`src/case_studies/hr_helpdesk/scenarios.json`)
-- LLM-as-judge harness (`src/eval/judge.py`)
+- LLM-as-judge harness (`src/eval/judge.py`) with 3-vendor multi-judge consensus (Anthropic + OpenAI + DeepSeek)
 - Retrieval sanity scorers (HotpotQA + MS Marco) with both naive and llm-answer modes
+- HotpotQA full-agent benchmark, n=100 dev distractor: F1=0.816, EM=0.690 (`src/eval/hotpotqa_*.py`, `docs/hotpotqa_agent_result.md`)
+- 4 frontier-technique ablations with with-vs-without tables (Self-Refine, DSPy compilation, multi-LLM MoE, counterfactual robustness)
 
 ### Infra
 - `docker-compose.yml` (Qdrant + Postgres + API container)
 - `infra/Dockerfile` (API) + `infra/Dockerfile.gradio` (UI)
-- `infra/fly.toml` for Fly.io
+- `infra/fly.toml` for Fly.io (live)
+- `infra/azure/deploy.sh` for Azure Container Apps (live, dual-cloud sibling of Fly.io)
 - `infra/huggingface-space.yml` for HF Space
 - `.github/workflows/`: test.yml, eval-gate.yml, eval-nightly.yml
 
@@ -42,23 +45,22 @@
 - `docs/eval-methodology.md` (closed-loop honest chapter, blog draft)
 - `docs/case-study-hr-helpdesk.md` (Demo 2)
 - `docs/deploy.md` (Fly.io + HF Space + AWS deferred)
+- `docs/deploy-azure.md` (Azure Container Apps all-sidecar architecture, dual-cloud reproduction)
+- `docs/hotpotqa_agent_result.md` (full-agent benchmark setup, result table, ReAct comparison, failure analysis)
 - `docs/demo-script.md` (5-min video storyboard)
 - `docs/w1_report.md`, `docs/w2_report.md`, `docs/w4_report.md`, `docs/w5_report.md` (per-gate audits)
 
 ### Tests
-- 66 pytests, all green
+- 117 pytests, all green (66 v1 base + 4 frontier ablation suites + 13 HotpotQA benchmark)
 
 ## Only-you (cannot automate)
 
 | Item | Why | Where to start |
 |---|---|---|
 | Record the 5-min demo video | screen + voice capture | follow `docs/demo-script.md` storyboard scene by scene |
-| `fly deploy` to public URL | needs your Fly.io account + paid CC | `infra/fly.toml`, `docs/deploy.md` |
 | Push to HF Space | needs your HF account | `infra/huggingface-space.yml`, `docs/deploy.md` |
 | W9 launch posts | manual social / outreach | NL AI Slack groups, LinkedIn, HN, r/MachineLearning |
 | External reviewer spot-check | needs reaching out to 1-2 NL tech contacts | W7 hard gate per design |
-| Multi-LLM ablation columns (Sonnet 4.6 / GPT-4o / Haiku 4.5) | needs additional API keys | once a second key is set in `.env`, the eval harness picks up the model from `LLM_MODEL` |
-| Add `ANTHROPIC_API_KEY` for real Claude calls | needs the key | swap `DEEPSEEK_API_KEY` in `.env` and unset `ANTHROPIC_BASE_URL` |
 | Production federation (Okta / SAML) | architecture pivot | v1.5 backlog explicit; design Section 3.3 |
 | Demo GIF capture | screen recording | once UI is recorded for the video, extract a 5-10s clip |
 
@@ -66,7 +68,9 @@
 
 | Item | Result |
 |---|---|
-| Full 30-scenario eval | answer=0.71, complete=0.75, tools=0.96, gov=0.97, action=0.46 (eval-20260512-161340-rejudged.json) |
-| HotpotQA llm-answer | EM=0.28, F1=0.29 (lift from F1=0.077 naive baseline) |
-| MS Marco MRR@10 | 0.54 (PASS, beats published baseline) |
+| Full 30-scenario eval | answer=0.69, complete=0.75, tools=0.94, gov=1.00, action=0.53 (eval-20260513-105857.json) |
+| HotpotQA full-agent (n=100, dev distractor) | F1=0.816, EM=0.690 (1.7x ReAct paper best-prompted 0.473) |
+| HotpotQA retrieval-only (n=100) | EM=0.28, F1=0.29 (lower-bound component sanity) |
+| MS Marco MRR@10 | 0.54 (PASS, beats BGE-M3 published baseline 0.32 by 69%) |
 | Adversarial | 10 / 10 blocked (100%) |
+| Live deploy | dual-cloud: Fly.io + Azure Container Apps (westeurope) |

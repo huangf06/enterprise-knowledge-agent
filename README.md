@@ -2,7 +2,7 @@
 
 Production-grade open-source enterprise knowledge agent. Cross-source agentic reasoning over six SaaS surfaces (Slack / Jira / Calendar / GitHub / GDocs / Email) with auditable cross-source policy enforcement.
 
-Ships four frontier-technique ablations with honest with-vs-without tables (three negatives, one positive). Live deploy + Langfuse tracing + 102 / 102 tests.
+Ships four frontier-technique ablations with honest with-vs-without tables (three negatives, one positive), HotpotQA full-agent F1 of 0.816 (n=100 dev distractor) anchored against the ReAct paper baseline of 0.473, dual-cloud live deploy (Fly.io + Azure Container Apps), Langfuse tracing, and 117 / 117 tests.
 
 > All data is synthetic and byte-deterministic from `seed=42`. No real customer data, no PII. Governance is a *pattern demo* on synthetic identity, not Okta / Azure AD federation (v1.5 scope).
 
