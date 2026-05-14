@@ -1,6 +1,6 @@
 # Sprint 5 Frontier #4 Multi-LLM MoE (scaffold)
 
-> **Pareto result:** [docs/sprint5_moe_pareto.md](sprint5_moe_pareto.md) — fast-tier (n=10) replay across DeepSeek / Sonnet 4.6 / Haiku 4.5 / gpt-4o-mini.
+> **Pareto result:** [docs/sprint5_moe_pareto.md](sprint5_moe_pareto.md); fast-tier (n=10) replay across DeepSeek / Sonnet 4.6 / Haiku 4.5 / gpt-4o-mini.
 
 Per-node routing config + cost-projection harness in place. Live dispatch wiring (translating Anthropic tool_use to OpenAI tools schema) is the Sprint 5 day-of integration step; the Pareto experiment above is a synthesize-only replay so the schema translation is not required to publish the result.
 

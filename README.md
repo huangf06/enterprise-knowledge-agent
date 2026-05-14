@@ -30,8 +30,8 @@ Self-authored cross-source briefing benchmark, 30 knowledge-worker scenarios. LL
 | Answer correctness | **0.69** | LLM-judge, n=30, post-F1 structured judge |
 | Completeness | **0.75** | LLM-judge, n=30 |
 | Tool selection quality | **0.94** | LLM-judge, n=30 |
-| Governance compliance | **1.00** | LLM-judge, n=30 — perfect on the test set |
-| Action recommend quality | **0.53** | weakest area — answers describe the situation more than they recommend a specific next step |
+| Governance compliance | **1.00** | LLM-judge, n=30; perfect on the test set |
+| Action recommend quality | **0.53** | weakest area; answers describe the situation more than they recommend a specific next step |
 | Avg tool calls per query | 3.60 | hard cap is 6 |
 | Avg latency per query (s) | 150 | wallclock end-to-end, p50 163s, p95 234s |
 | Cost per query (USD) | $0.0036 | DeepSeek V4 Pro pricing, includes plan / tool_select / reflect / synthesize |
@@ -59,7 +59,7 @@ Four frontier techniques shipped with explicit with-vs-without tables.
 | Technique | Ablation | Verdict | Detail |
 |---|---|---|---|
 | Self-Refine (Madaan 2023) | OFF vs ON, n=30 | **OFF default**: -0.05 to -0.08 on correctness / completeness; +0.08 on source_coverage; +18% latency | [docs/frontier3_self_refine.md](docs/frontier3_self_refine.md) |
-| DSPy compilation (synthesize node) | manual prompt vs compiled, n=10 | **OFF default**: 2-judge regime (the training metric) shows +0.05 on correctness; 3-judge regime (adds back the agent's model class) flips to -0.03 — a Goodhart effect that v4.1 N1+P15 was designed to catch. Plus -1.0 on cite_source_coverage and -0.17 on action_recommend_quality. | [docs/sprint4_dspy_agent_ablation.md](docs/sprint4_dspy_agent_ablation.md) |
+| DSPy compilation (synthesize node) | manual prompt vs compiled, n=10 | **OFF default**: 2-judge regime (the training metric) shows +0.05 on correctness; 3-judge regime (adds back the agent's model class) flips to -0.03, a Goodhart effect that v4.1 N1+P15 was designed to catch. Plus -1.0 on cite_source_coverage and -0.17 on action_recommend_quality. | [docs/sprint4_dspy_agent_ablation.md](docs/sprint4_dspy_agent_ablation.md) |
 | Multi-LLM MoE (synthesize routing) | 4 vendors × n=10 fast-tier | **DeepSeek default**: Sonnet 4.6 lift is +0.07 (within n=10 noise floor) at 32× cost. All four vendors lie on the Pareto frontier; default to DeepSeek with Sonnet 4.6 as opt-in per-request | [docs/sprint5_moe_pareto.md](docs/sprint5_moe_pareto.md) |
 | Counterfactual robustness | 3 perturbations × n=10 fast-tier | **Governance held at 1.00 across all perturbations**; doc_deletion drops answer_correctness to 0.0-0.3 (graceful degradation, no hallucination of removed sources) | [docs/sprint6_counterfactual_result.md](docs/sprint6_counterfactual_result.md) |
 
@@ -72,12 +72,12 @@ Public benchmarks (anchored against external baselines):
 | **HotpotQA F1 (full-agent mode, n=100, dev distractor)** | **0.816** | ReAct paper best-prompted 0.473, Yao 2022 | **PASS**, see `docs/hotpotqa_agent_result.md` |
 | **HotpotQA EM (full-agent mode, same setup)** | **0.690** | ReAct paper ~0.30, Yao 2022 | **PASS**, same setup as F1 row |
 | HotpotQA EM (retrieval-only, n=100, BGE-M3 top-2 + DeepSeek extraction) | 0.28 | naive span 0.0 | 4x lift over naive baseline |
-| HotpotQA F1 (retrieval-only, same setup) | 0.29 | — | Lower bound: the gap to the full-agent row (2.8x) is the value of the agent loop |
+| HotpotQA F1 (retrieval-only, same setup) | 0.29 | n/a | Lower bound: the gap to the full-agent row (2.8x) is the value of the agent loop |
 | MS Marco MRR@10 (n=50, BGE-M3 cosine, top-10) | 0.54 | BGE-M3 published 0.32 | **PASS**, beats published baseline by 69% |
 
 ## Demo
 
-A 30-second Monday morning briefing: Sarah Chen asks for today's priorities. The agent calls four tools across Slack / Jira / Calendar / Email, detects a Thursday all-hands vs. Alice 1:1 conflict, finds a Q3-launch PR blocking her review queue, surfaces the stale EY contract follow-up email, and recommends an ordered action list — with inline citations and a tool-call audit summary.
+A 30-second Monday morning briefing: Sarah Chen asks for today's priorities. The agent calls four tools across Slack / Jira / Calendar / Email, detects a Thursday all-hands vs. Alice 1:1 conflict, finds a Q3-launch PR blocking her review queue, surfaces the stale EY contract follow-up email, and recommends an ordered action list with inline citations and a tool-call audit summary.
 
 Try it now on the live deploy:
 
@@ -98,7 +98,7 @@ cp .env.example .env
 # Fill DEEPSEEK_API_KEY in .env
 docker compose up -d qdrant postgres
 uv sync --extra dev
-uv run python scripts/generate_data.py --seed 42     # required before docker / uvicorn — synthetic data is gitignored
+uv run python scripts/generate_data.py --seed 42     # required before docker / uvicorn; synthetic data is gitignored
 uv run uvicorn src.api.main:api --reload
 # POST /query with body {"query": "...", "user_name": "Sarah Chen", "user_role": "manager"}
 # returns an SSE stream of plan / tool_select / tool_execute / reflect / synthesize events
@@ -108,7 +108,7 @@ For the full container stack: run `generate_data.py` first, then `docker compose
 
 ## Differentiation
 
-- **Cross-source policy engine pattern over six SaaS surfaces.** `#leadership` channel and HR-private GDocs are denied to managers via a yaml policy table and an audit log records every decision. This is a *pattern demo* on synthetic identity — production federation (Okta / Azure AD / SAML) is v1.5 scope. See `docs/governance-design.md`.
+- **Cross-source policy engine pattern over six SaaS surfaces.** `#leadership` channel and HR-private GDocs are denied to managers via a yaml policy table and an audit log records every decision. This is a *pattern demo* on synthetic identity; production federation (Okta / Azure AD / SAML) is v1.5 scope. See `docs/governance-design.md`.
 - **Self-authored 30-scenario cross-source briefing eval, with the closed-loop risk surfaced explicitly.** LLM-judge prompt, rubric, scenarios, synthetic data, and tool outputs are all open and byte-reproducible from `seed=42`. The methodology blog (`docs/eval-methodology.md`) addresses single-author calibration head-on.
 - **Multi-judge consensus on every published ablation, with judge-pool isolation.** Anthropic Haiku 4.5 + OpenAI gpt-4o-mini + DeepSeek judge each ablation; DSPy training metric drops DeepSeek (the agent's primary) per v4.1 N1, and the comparison metric adds it back per v4.1 P15. The DSPy ablation surfaces a real Goodhart reversal under this dual regime (see `docs/sprint4_dspy_agent_ablation.md` "Critical finding"). Most LLM portfolios single-judge; this one publishes the cross-judge dispersion.
 - **Self-hostable and reproducible.** One `docker compose up` brings the entire stack up locally; no proprietary services in the loop except the LLM API. Live on Fly.io since 2026-05-13; deploy guide at `docs/deploy.md`.
@@ -136,19 +136,19 @@ Full architecture diagram, module reuse table, and the Demo 2 modularity case st
 
 ## Repo map
 
-- `src/data/` — synthetic generator + entity model + injection patterns
-- `src/tools/` — six tool implementations + registry
-- `src/governance/` — RBAC, PII redact, audit, GDPR, injection guard
-- `src/agent/` — LangGraph 5-node graph
-- `src/retrieval/` — BGE-M3 + Qdrant
-- `src/eval/` — scenarios, judge, runner, retrieval sanity, adversarial
-- `src/api/` — FastAPI SSE endpoint
-- `prompts/` — version-controlled agent prompts
-- `data/synthetic/` — generated (gitignored)
-- `data/eval/` — scenarios + adversarial + 30-user seed
-- `docs/` — design + eval methodology + governance + failure modes
-- `scripts/` — CLIs (generate, run_eval, run_adversarial, gates)
-- `.github/workflows/` — CI test + eval-gate + eval-nightly
+- `src/data/`: synthetic generator, entity model, injection patterns
+- `src/tools/`: six tool implementations and registry
+- `src/governance/`: RBAC, PII redact, audit, GDPR, injection guard
+- `src/agent/`: LangGraph 5-node graph
+- `src/retrieval/`: BGE-M3 over Qdrant
+- `src/eval/`: scenarios, judge, runner, retrieval sanity, adversarial
+- `src/api/`: FastAPI SSE endpoint
+- `prompts/`: version-controlled agent prompts
+- `data/synthetic/`: generated (gitignored)
+- `data/eval/`: scenarios, adversarial vectors, 30-user seed
+- `docs/`: design, eval methodology, governance, failure modes
+- `scripts/`: CLIs for generate, run_eval, run_adversarial, gates
+- `.github/workflows/`: CI test, eval-gate, eval-nightly
 
 ## Honesty calibration
 

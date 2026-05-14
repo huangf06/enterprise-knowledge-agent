@@ -92,7 +92,7 @@ The 5-node decomposition is the design's preference for *visibility*. The reveal
 - The `similar_briefing_history` tool (v1.5; removed from W3 per Codex review)
 - Multi-LLM ablation (GPT-4o / Sonnet 4.6 / Haiku 4.5; v1.5 per W2 decision)
 
-## Module reuse — Demo 1 (cross-source) vs Demo 2 (HR Helpdesk single-source)
+## Module reuse: Demo 1 (cross-source) vs Demo 2 (HR Helpdesk single-source)
 
 Demo 2 is an optional W7 case study, not a hard gate. Module reuse table per design Section 4:
 

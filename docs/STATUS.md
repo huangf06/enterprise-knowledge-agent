@@ -1,4 +1,4 @@
-# v1 status — what's done, what's only-you
+# v1 status: what's done, what's only-you
 
 > Auto-generated snapshot of the v1 power-through. For per-week details see `docs/w{1..5}_report.md`.
 

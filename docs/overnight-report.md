@@ -1,4 +1,4 @@
-# Overnight execution report — 2026-05-13
+# Overnight execution report: 2026-05-13
 
 Autonomous session run from end of Day-1 through Sprint 1, 2, 3 (in full) + Sprint 4, 5, 6 scaffolds. 12 logical commits land on main, no force-pushes, no destructive ops, no production deploys. All 67 tests pass.
 
@@ -8,7 +8,7 @@ Autonomous session run from end of Day-1 through Sprint 1, 2, 3 (in full) + Spri
 - **Sprint 2 done**: F2 + F3 + F4 + F6 + A5 + F8.
 - **Sprint 3 done**: Frontier #3 (Self-Refine) + A7 + A3.
 - **Sprints 4 / 5 / 6 scaffolded**: code + tests + docs ready; need your OK for budgeted execution.
-- **Sprint 7 (polish)**: not started — needs your voice for the blog + your face for the demo video.
+- **Sprint 7 (polish)**: not started: needs your voice for the blog + your face for the demo video.
 
 Total API spend overnight: **~$0.18** (DeepSeek $0.07 + Anthropic $0.10 + OpenAI $0.005). Well under any concern threshold.
 
@@ -55,13 +55,13 @@ edf9fd4 feat(eval): N2 v1 cost/latency baseline + per-node instrumentation
 | Sprint | Feature | Reason for hold | Day-of action |
 |---|---|---|---|
 | 4 | DSPy compilation | $25-50 single-shot spend | `uv run python scripts/dspy_compile.py --iterations 50` |
-| 5 | MoE live dispatch | needs Anthropic↔OpenAI tool_use schema translation + your decision on synthesize model (projection shows Sonnet 4.6 is 12x cost — see docs/sprint5_moe.md) | wire `route_for_node` into messages_create + add tool_use translator |
+| 5 | MoE live dispatch | needs Anthropic↔OpenAI tool_use schema translation + your decision on synthesize model (projection shows Sonnet 4.6 is 12x cost; see docs/sprint5_moe.md) | wire `route_for_node` into messages_create + add tool_use translator |
 | 6 | Counterfactual ablation runner | needs offline-replay synthesize per variant | write `scripts/run_counterfactual.py` |
 
 ## Findings from this session worth flagging
 
 1. **DEFAULT_MOE config is too premium-heavy.** Synthesize on Sonnet 4.6 multiplies per-query cost by 42x just for that node. Total cost ~12x baseline. Day-of decision in Sprint 5: keep Sonnet (measure quality first to justify), downshift to Haiku, or downshift to gpt-4o-mini. See `docs/sprint5_moe.md` for the projection table.
-2. **F3 inter-judge agreement is moderate.** mean Pearson r 0.44-0.61 across judge pairs. Single-judge scores are not ground truth — exactly the signal that justifies shipping multi-judge consensus as the leaderboard publication metric.
+2. **F3 inter-judge agreement is moderate.** mean Pearson r 0.44-0.61 across judge pairs. Single-judge scores are not ground truth; exactly the signal that justifies shipping multi-judge consensus as the leaderboard publication metric.
 3. **F1 fixed 14 / 14 parse errors.** Post-F1 baseline aligns with README historical values (0.64 / 0.70 / 0.93 / 1.00 / 0.53 vs 0.71 / 0.75 / 0.96 / 0.97 / 0.46).
 4. **A1: hybrid RRF does not help on MS Marco.** dense alone beats hybrid by 0.007 MRR. Production stack is dense → rerank; BM25 + RRF preserved as code paths for future ablation.
 
@@ -75,10 +75,10 @@ Five things I deliberately did not decide:
 4. **Enable A7 trace replay in CI.** Costs ~$0.02 per PR (fast-tier eval). Add `DEEPSEEK_API_KEY` to repo secrets + commit `.github/workflows/eval-replay.yml` from the template in `docs/a7_trace_replay.md`.
 5. **Push to GitHub.** All 12 commits sit on local `main`. Per your constraint, I did not `git push`.
 
-## Sprint 7 (polish) — what only you can do
+## Sprint 7 (polish): what only you can do
 
 - **Signature blog.** Voice-tuned to your portfolio narrative. Needs your hands on the keyboard.
-- **Demo video.** 30-second screencast — your face / cursor / voice. I can write the script (see existing `docs/demo-script.md`).
+- **Demo video.** 30-second screencast: your face / cursor / voice. I can write the script (see existing `docs/demo-script.md`).
 - **README final**. Numbers in this morning report can be lifted into README, but the framing of "what to highlight" is a personal-brand choice.
 - **O1/O2/O3 paper citations**. Optional doc-level work. 1h.
 
@@ -101,7 +101,7 @@ Plug the two `--multijudge.json` results into a small comparison script and you 
 ## Total project state at sunrise
 
 - **9/9 v4.1 frontier + foundation features live or scaffolded.**
-- **3 unran ablations** (Self-Refine, MoE, Counterfactual) — each is one command + a $0.10-$50 spend away from a result.
+- **3 unran ablations** (Self-Refine, MoE, Counterfactual): each is one command + a $0.10-$50 spend away from a result.
 - **0 destructive ops, 0 force pushes, 0 unauthorized deploys.**
 - **101/101 tests green** (added 34 new tests overnight covering F3/F4/F6/A7/Frontier #7).
 
@@ -132,7 +132,7 @@ A real bug was found during this run and fixed: `cost_ledger` shared SQLite acro
 Output: `src/agent/compiled/synthesize.json`
 Detail: `docs/sprint4_dspy_result.md`
 
-After fixing a training-data bug (v1/v2 used pre-tool_history N2 baseline; v3 uses the fresh OFF eval), DSPy v3 produced 6 candidate programs scoring 78-82 on the 2-judge training metric. **Best candidate has zero demos** — DSPy's BootstrapFewShotWithRandomSearch explored 1-4 few-shot demonstrations and chose to keep none. Reading: the manual `prompts/synthesize.md` is already strong; few-shot demos do not add value on this benchmark.
+After fixing a training-data bug (v1/v2 used pre-tool_history N2 baseline; v3 uses the fresh OFF eval), DSPy v3 produced 6 candidate programs scoring 78-82 on the 2-judge training metric. **Best candidate has zero demos**; DSPy's BootstrapFewShotWithRandomSearch explored 1-4 few-shot demonstrations and chose to keep none. Reading: the manual `prompts/synthesize.md` is already strong; few-shot demos do not add value on this benchmark.
 
 Cost: ~$1.50 of Anthropic + OpenAI for v3 (vs $25-50 budgeted in the plan).
 

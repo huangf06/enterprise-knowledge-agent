@@ -18,7 +18,7 @@ See the table in `docs/architecture.md`. Headline:
 | `src/case_studies/hr_helpdesk/tools.py` | 3 tools: `hr_policy_search`, `employee_self_data_query`, `escalation_routing` |
 | `src/case_studies/hr_helpdesk/scenarios.json` | 5 scenarios: paternity, code-freeze vacation, GDPR erasure, expense, escalation |
 
-The same `src/eval/runner.py` runs both Demo 1 and Demo 2 scenarios — just point the loader at the alternate scenarios file. Same `src/eval/judge.py` rubric.
+The same `src/eval/runner.py` runs both Demo 1 and Demo 2 scenarios; just point the loader at the alternate scenarios file. Same `src/eval/judge.py` rubric.
 
 ## Demo story (30 seconds)
 

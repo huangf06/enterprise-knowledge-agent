@@ -32,7 +32,7 @@
    uv run uvicorn src.api.main:api --reload  # POST /query, check SSE
    ```
 
-## Qdrant decision (BLOCKING — pick before deploy)
+## Qdrant decision (BLOCKING: pick before deploy)
 
 The fly.toml currently expects `QDRANT_HOST = qdrant.internal`, which means a
 sister Fly app named "qdrant" reachable over the Fly private network. Options:
@@ -41,7 +41,7 @@ sister Fly app named "qdrant" reachable over the Fly private network. Options:
 |---|---|---|---|
 | **A. Qdrant Cloud free tier** (Recommended) | 5 min | $0 | Free 1GB shard. Edit `infra/fly.toml` env to `QDRANT_HOST=<cluster>.qdrant.io`, `QDRANT_PORT=6333`, set `QDRANT_API_KEY` as secret. |
 | B. Sister Fly app `qdrant` | 20 min | +~$5/mo | `fly launch -a qdrant --image qdrant/qdrant:latest --region ams --vm-memory 1024`; mount volume; expose 6333 internally. |
-| C. Skip retrieval at boot | 0 min | $0 | The agent works without Qdrant up — only retrieval-dependent scenarios degrade. Deploy now, add Qdrant later. |
+| C. Skip retrieval at boot | 0 min | $0 | The agent works without Qdrant up; only retrieval-dependent scenarios degrade. Deploy now, add Qdrant later. |
 
 Recommended: **A** for first deploy. Fei picks.
 
@@ -56,7 +56,7 @@ fly secrets set --app enterprise-knowledge-agent \
   COHERE_API_KEY="$COHERE_API_KEY"
 ```
 
-Optional (only if exposing eval endpoints publicly — currently not):
+Optional (only if exposing eval endpoints publicly; currently not):
 
 ```bash
 fly secrets set --app enterprise-knowledge-agent \
@@ -83,7 +83,7 @@ fly secrets list --app enterprise-knowledge-agent
 # From repo root.
 fly launch --copy-config --no-deploy --org personal --region ams \
   --name enterprise-knowledge-agent
-# (Skip the prompts for postgres/redis/etc — they're not used.)
+# (Skip the prompts for postgres/redis/etc: they're not used.)
 
 fly deploy --remote-only
 ```
@@ -130,10 +130,10 @@ fly deploy --image <previous-release-id>
 
 ## What I have NOT done (intentional handoff)
 
-- `fly launch` — not run; needs interactive prompts only Fei can answer (account choice, region confirm).
-- `fly deploy` — not run; production deploy must be Fei's explicit action.
-- Custom domain DNS (kea.feihuang.dev or similar) — out of scope of v4 deploy.
-- Production scaling / autoscale rules — current single-VM auto-stop config is correct for demo traffic.
+- `fly launch`: not run; needs interactive prompts only Fei can answer (account choice, region confirm).
+- `fly deploy`: not run; production deploy must be Fei's explicit action.
+- Custom domain DNS (kea.feihuang.dev or similar): out of scope of v4 deploy.
+- Production scaling / autoscale rules: current single-VM auto-stop config is correct for demo traffic.
 
 ## Cost expectation post-deploy
 

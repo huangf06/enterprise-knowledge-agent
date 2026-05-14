@@ -5,7 +5,7 @@
 
 ## Why v3
 
-v2 was 8 frontier techniques + 9 foundation items. Independent Opus review verdict: **Christmas tree syndrome — every ornament defensible, the tree as a whole reads "AI-assembled portfolio"**. Cut to 4 frontier + add 3 production-engineering items + fix sequencing.
+v2 was 8 frontier techniques + 9 foundation items. Independent Opus review verdict: **Christmas tree syndrome; every ornament defensible, the tree as a whole reads "AI-assembled portfolio"**. Cut to 4 frontier + add 3 production-engineering items + fix sequencing.
 
 This plan implements the reviewer's "minimum viable top 5%" recommendation in full.
 
@@ -43,7 +43,7 @@ This plan implements the reviewer's "minimum viable top 5%" recommendation in fu
 | Item | Hours | Source | Reason |
 |---|---|---|---|
 | **A1 Retrieval ablation chart** | 4h | Reviewer §5 add list | BM25 vs BGE-M3 vs hybrid vs +reranker on MS Marco + own 30 scenarios. Table-stakes for RAG project; missing was露怯. |
-| **A2 Cohere/BGE reranker** | 4h | Reviewer §5 | Cheapest "fix v1's bad number" — MS Marco 0.54 → likely 0.65+. |
+| **A2 Cohere/BGE reranker** | 4h | Reviewer §5 | Cheapest "fix v1's bad number"; MS Marco 0.54 → likely 0.65+. |
 | **A3 Semantic cache + cost/latency leaderboard** | 8h | Reviewer §5 | GPTCache or homegrown. p50/p95 latency + $/1k queries on README. Highest production-eng signal. |
 | **A4 Failure mode case study** | 6h | Reviewer §5 | 5 real failure traces, root cause + fix + delta. Most senior-feeling artifact, no paper needed. |
 | **A5 quick-eval subset (5 scenarios)** | 2h | Reviewer §9 (under-appreciated risk) | Mitigates eval-loop slowness compounding. Built early in Sprint 2. |
@@ -61,7 +61,7 @@ This plan implements the reviewer's "minimum viable top 5%" recommendation in fu
 - After cuts: ~95-100h realistic.
 - **All projected numbers in README header replaced with "TBD - see ablation table"** until measured. Honesty calibration is the game.
 
-## v3 scope — what stays
+## v3 scope: what stays
 
 ### Foundation layer (~52h, locked)
 
@@ -99,10 +99,10 @@ This plan implements the reviewer's "minimum viable top 5%" recommendation in fu
 
 #### #7 Counterfactual robustness eval (12-15h)
 - **Paper**: Liu et al. 2024 "Noise Robustness in RAG"; CRAG (Meta 2024)
-- **What**: 3 perturbations per scenario — noise injection (5 distractor docs), doc deletion (remove ground-truth), entity swap (Sarah → Alice). degradation_rate = (clean - perturbed) / clean.
+- **What**: 3 perturbations per scenario: noise injection (5 distractor docs), doc deletion (remove ground-truth), entity swap (Sarah → Alice). degradation_rate = (clean - perturbed) / clean.
 - **Load-bearing**: degradation curves are one of two interview-screenshot moments.
 
-#### #6 PAIR adversarial — DEMOTED to optional, capped 200 attempts (~10h if buffer)
+#### #6 PAIR adversarial: DEMOTED to optional, capped 200 attempts (~10h if buffer)
 - Only if Sprint 7 has slack. Always state attacker model strength.
 
 ### Production-engineering additions (~24h)
@@ -175,9 +175,9 @@ GitHub/GDocs/Email) with honest, production-grade evaluation.
 
 ## Production engineering
 
-- Retrieval ablation (BM25 / BGE-M3 / hybrid / +reranker) — see docs/retrieval-ablation.md
-- Semantic cache + cost/latency leaderboard — p50/p95/$/1k queries on dashboard
-- 5 documented failure case studies — see docs/failure-cases.md
+- Retrieval ablation (BM25 / BGE-M3 / hybrid / +reranker): see docs/retrieval-ablation.md
+- Semantic cache + cost/latency leaderboard: p50/p95/$/1k queries on dashboard
+- 5 documented failure case studies: see docs/failure-cases.md
 - All metrics measured; no projected numbers
 ```
 
@@ -192,7 +192,7 @@ All cells "TBD - see ablation" until measured. **No pre-committed numbers.**
 
 | Risk | Likelihood | Impact | Mitigation |
 |---|---|---|---|
-| **(NEW) Eval-loop slowness compounds** — full eval 5min → 90min by Sprint 5 | **H** | **H** | A5 quick-eval subset (5 scenarios, <2min) built in Sprint 2. Cache aggressively. Use full eval only at sprint boundaries. |
+| **(NEW) Eval-loop slowness compounds**; full eval 5min → 90min by Sprint 5 | **H** | **H** | A5 quick-eval subset (5 scenarios, <2min) built in Sprint 2. Cache aggressively. Use full eval only at sprint boundaries. |
 | DSPy 30h budget exceeded | M | M | Week 10 hard checkpoint: if not converging, fallback to "manual + ablation table" (10h scope) |
 | DeepSeek 1M context unstable | M | L | Day-1 verified; fallback 200K if needed |
 | Multi-LLM MoE needs multi-vendor keys | M | M | Day-1 verified. Minimum: DeepSeek + Claude + OpenAI keys all working |

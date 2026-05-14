@@ -1,18 +1,18 @@
 # Demo video script
 
-Recording target: a ~30-second hero clip (`docs/demo.gif`, used in the README) and a 3-5 minute walk-through (`docs/demo.mp4`, used in the blog and LinkedIn). The 30-second hero clip is the load-bearing one — most viewers will only see that.
+Recording target: a ~30-second hero clip (`docs/demo.gif`, used in the README) and a 3-5 minute walk-through (`docs/demo.mp4`, used in the blog and LinkedIn). The 30-second hero clip is the load-bearing one; most viewers will only see that.
 
 ## Recording surface (decided 2026-05-14)
 
 Record against the **live Fly deploy** at <https://enterprise-knowledge-agent.fly.dev/>, not a local Gradio UI. The portfolio narrative throughout the repo points at the live URL, so the recording should match. Setup:
 
 - Left two-thirds of the screen: terminal running `curl -N -X POST ...` against the live `/query` endpoint. Font size big enough to read in a 1080p export.
-- Right third: browser with two tabs — (a) the GH Pages docs at <https://huangf06.github.io/enterprise-knowledge-agent/>, (b) the repo README on GitHub. Switch between them as the voice-over hits each section.
+- Right third: browser with two tabs: (a) the GH Pages docs at <https://huangf06.github.io/enterprise-knowledge-agent/>, (b) the repo README on GitHub. Switch between them as the voice-over hits each section.
 - Optional: a third terminal panel running `fly logs --app enterprise-knowledge-agent | tail -f` to show requests landing in production. Only show this in the 3-5 minute long cut, not the 30-second hero.
 
 The Gradio UI at `src/ui/app.py` still ships as a local-dev convenience and is documented in `docs/deploy.md` under "Local-only"; it is not on the recording path.
 
-## Scene 1 — 30 seconds — Cross-source Monday morning briefing (HERO)
+## Scene 1: 30 seconds: Cross-source Monday morning briefing (HERO)
 
 Open terminal. Voice over while typing:
 
@@ -28,7 +28,7 @@ curl -N -X POST https://enterprise-knowledge-agent.fly.dev/query \
 
 As events stream in, the camera stays on the terminal. The SSE stream emits, in order:
 
-- `event: plan` — the agent's plan in one sentence
+- `event: plan`: the agent's plan in one sentence
 - `event: tool_select` × N
 - `event: tool_execute` × N (one per tool with `ok: true`)
 - `event: reflect` with `verdict`
@@ -42,7 +42,7 @@ Voice-over while the stream renders (~20-30 seconds end to end on a warm machine
 
 When the `final` event lands, pause on the answer for ~2 seconds, then cut. That is the 30-second hero clip.
 
-## Scene 2 — 45 seconds — Cross-source RBAC denial (LIVE)
+## Scene 2: 45 seconds: Cross-source RBAC denial (LIVE)
 
 Voice-over:
 
@@ -59,14 +59,14 @@ curl -N -X POST https://enterprise-knowledge-agent.fly.dev/query \
 The SSE stream will:
 
 1. Plan a `gdocs_search` call.
-2. Tool-execute the search (`ok: true` — the search itself runs).
+2. Tool-execute the search (`ok: true`; the search itself runs).
 3. Synthesize answer that explicitly refuses with a citation to the RBAC decision.
 
 Voice-over highlight as the answer streams:
 
 > "The agent does not pretend it lacks the question. It explains exactly why the document is unreachable for this role: `acl=['hr']` is not granted to managers. Refusal is a positive output, not a missing one."
 
-## Scene 3 — 45 seconds — Adversarial prompt-injection defense (LIVE)
+## Scene 3: 45 seconds: Adversarial prompt-injection defense (LIVE)
 
 Voice-over:
 
@@ -86,19 +86,19 @@ Voice-over:
 
 > "10 of 10 adversarial vectors are blocked on the regression set. The audit log records every denial so the failure mode is auditable, not just resisted."
 
-## Scene 4 — 60 seconds — The honest leaderboard
+## Scene 4: 60 seconds: The honest leaderboard
 
 Cut to the GitHub README on the side monitor. Scroll to the Leaderboard table. Voice-over hits four lines:
 
 > "Answer correctness is 0.69 LLM-judge on a 30-scenario self-authored eval. We don't claim 0.95; the eval-methodology doc explains why that would be a closed-loop overclaim."
 
-> "Governance compliance is 1.0 — but only against this 30-scenario synthetic-identity policy table. Real Okta or Azure AD federation is explicitly v1.5 scope. That note is in the README, not buried."
+> "Governance compliance is 1.0; but only against this 30-scenario synthetic-identity policy table. Real Okta or Azure AD federation is explicitly v1.5 scope. That note is in the README, not buried."
 
 > "Four frontier-technique ablations ship with with-vs-without tables. Three negatives, one positive."
 
-> "Self-Refine: minus 0.08. DSPy: plus 0.05 on the two-judge regime, but minus 0.03 on the three-judge regime — a Goodhart reversal that judge-pool isolation was designed to surface. MoE: Sonnet 4.6 lift is within the n=10 noise floor at 32x the cost. Counterfactual: governance held at 1.0 across entity-swap, noise-injection, and doc-deletion perturbations."
+> "Self-Refine: minus 0.08. DSPy: plus 0.05 on the two-judge regime, but minus 0.03 on the three-judge regime; a Goodhart reversal that judge-pool isolation was designed to surface. MoE: Sonnet 4.6 lift is within the n=10 noise floor at 32x the cost. Counterfactual: governance held at 1.0 across entity-swap, noise-injection, and doc-deletion perturbations."
 
-## Scene 5 — 45 seconds — Reproducibility close
+## Scene 5: 45 seconds: Reproducibility close
 
 Cut back to terminal. Voice-over:
 
@@ -122,7 +122,7 @@ Voice-over:
 
 > "The agent, the data, the scenarios, the judge prompt, and the governance policy are all open-source under Apache-2.0 and reproducible from `seed=42`. You can re-run every number on the leaderboard."
 
-## Scene 6 — 30 seconds — Differentiation close
+## Scene 6: 30 seconds: Differentiation close
 
 Cut to the README's "Differentiation" section on the side monitor. Voice-over hits four bullets:
 
@@ -138,7 +138,7 @@ End-card: the architecture diagram from `docs/architecture.md`, with the GitHub 
 - [ ] Export the hero clip as a `.gif` ≤ 8 MB so the README embed renders inline
 - [ ] Long cut is exported as `docs/demo.mp4` and linked from the README; not embedded inline
 - [ ] No background music; just keystrokes + voice-over
-- [ ] One take per scene; do not stitch — viewers can tell
+- [ ] One take per scene; do not stitch: viewers can tell
 
 ## Why this script changed (2026-05-14)
 

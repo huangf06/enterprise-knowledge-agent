@@ -4,7 +4,7 @@
 
 Three deploy targets in v1. Fly.io is the primary URL cited in the README hero. Azure Container Apps is the cross-cloud demonstration (3-app sidecar stack matching `docker-compose.yml`). HF Spaces is the Gradio-UI variant.
 
-## Option A — Fly.io (live)
+## Option A: Fly.io (live)
 
 `fly.toml` at repo root is the canonical config (`infra/fly.toml` is a documentation mirror): region `ams`, shared-cpu-2x + 2GB RAM (sized for BGE-M3 embedding model in-process), `min_machines_running = 1` so one machine stays warm 24/7 to avoid the ~2-3 minute Python import cold-start. The HA replica auto-stops when idle.
 
@@ -34,13 +34,13 @@ Observability after deploy:
 - Langfuse Cloud dashboard at https://cloud.langfuse.com (public-read URL captured in project_eka_v4_day1_setup memory).
 - Every `/query` POST emits an `agent_query` trace; per-node `messages_create` calls show as child generations with token usage.
 
-## Option B — Hugging Face Space
+## Option B: Hugging Face Space
 
 Push the repo to `https://huggingface.co/spaces/<user>/enterprise-knowledge-agent`. The Space picks up `infra/huggingface-space.yml` for metadata and `infra/Dockerfile.gradio` for the build. Set `DEEPSEEK_API_KEY` as a Secret in Space Settings.
 
 The HF variant launches the Gradio reveal-panel UI on port 7860; the FastAPI endpoint is also reachable internally.
 
-## Option C (deferred, v1.5) — AWS ECS Fargate
+## Option C (deferred, v1.5): AWS ECS Fargate
 
 Terraform / CDK in `infra/aws/`. AWS Fargate runs the API, RDS Postgres holds the audit log, Secrets Manager carries the API key. Listed in `v1.5_backlog.md`.
 

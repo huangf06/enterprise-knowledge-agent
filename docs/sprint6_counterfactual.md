@@ -1,6 +1,6 @@
 # Sprint 6 Frontier #7 Counterfactual robustness (scaffold)
 
-> **Ablation result:** [docs/sprint6_counterfactual_result.md](sprint6_counterfactual_result.md) — fast-tier (n=10) × 3 perturbations.
+> **Ablation result:** [docs/sprint6_counterfactual_result.md](sprint6_counterfactual_result.md); fast-tier (n=10) × 3 perturbations.
 
 Three perturbations per v4.1 plan, applied at tool-result level so `seed=42` synthetic data on disk is untouched.
 

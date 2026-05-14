@@ -2,7 +2,7 @@
 
 Locked 2026-05-13. Canonical pre-v4 numbers all subsequent frontier claims (MoE Pareto, semantic cache lift, DSPy improvement, Self-Refine deltas) compare against.
 
-Source run: `eval_results/runs/eval-20260513-021421-rejudged.json`. Quality scores below are post-F1 rejudge (tool_use schema + 4096 max_tokens to fit DeepSeek reasoner thinking blocks); zero remaining parse errors. The original raw run hit 14 parse errors on first pass — F1 (Sprint 1) eliminates that class entirely.
+Source run: `eval_results/runs/eval-20260513-021421-rejudged.json`. Quality scores below are post-F1 rejudge (tool_use schema + 4096 max_tokens to fit DeepSeek reasoner thinking blocks); zero remaining parse errors. The original raw run hit 14 parse errors on first pass; F1 (Sprint 1) eliminates that class entirely.
 
 ## Latency
 

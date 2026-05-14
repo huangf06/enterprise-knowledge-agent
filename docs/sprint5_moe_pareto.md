@@ -1,4 +1,4 @@
-# Sprint 5 Frontier #4 MoE — synthesize-only Pareto
+# Sprint 5 Frontier #4 MoE: synthesize-only Pareto
 
 Source: `moe-synthesize-20260513-122907.json` (tier=fast, n_scenarios per route = baseline rows with `ok==True`).
 
@@ -16,7 +16,7 @@ if `scripts/run_multi_judge.py` is run on this file.
 
 ## Reading the table
 
-**Pareto frontier**: any route that is not strictly dominated on all three of (quality, cost, latency) by another route. A `✓` does NOT mean "best" — it means "a defensible pick depending on what you value".
+**Pareto frontier**: any route that is not strictly dominated on all three of (quality, cost, latency) by another route. A `✓` does NOT mean "best"; it means "a defensible pick depending on what you value".
 
 The headline question is: **does the more expensive vendor actually buy a meaningful quality lift on the synthesize node?** Compare DeepSeek baseline to Anthropic Sonnet 4.6 (12× input cost, 53× output cost) and report whether the answer_correctness delta justifies the spend.
 
@@ -41,4 +41,4 @@ Reading the table conservatively (all four routes are on the Pareto frontier, so
 | Anthropic Sonnet 4.6 | $0.131 | $0.0131 |
 | Anthropic Haiku 4.5 | $0.0308 | $0.0031 |
 | OpenAI gpt-4o-mini | $0.00287 | $0.000287 |
-| **Total experiment cost** | **$0.166** | — |
+| **Total experiment cost** | **$0.166** |; |

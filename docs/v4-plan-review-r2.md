@@ -13,7 +13,7 @@ Ship after fixing the Sprint 1 math and the CRITIC effort estimate. The two non-
 - N1 DSPy contamination locked precisely. F3 pool = Haiku + GPT-4o-mini during Sprint 4 compilation, DeepSeek excluded. Exactly the surgical fix.
 - N2 baseline moved to Sprint 1 day-1, 2h budgeted, scope right (per-node tokens, USD, p50/p95).
 - R3 non-protagonist swap locks the entity perturbation to "EY → PwC" not "Sarah → Alice". Avoids the synthetic-data regen rabbit hole and the injection-guard collision in one move.
-- R5 day-1 checklist went from 3 items to 11. Cohere quota, RAGAS dep tree, DNS propagation prep, OpenAI cost cap — all there.
+- R5 day-1 checklist went from 3 items to 11. Cohere quota, RAGAS dep tree, DNS propagation prep, OpenAI cost cap: all there.
 - P1-P11 process locks are clean. P3 (redact `expected_topics` from judge during DSPy) is the right surgical guard against keyword-leak reward hacking.
 - O1-O3 citations correctly demoted to doc-level (no implementation cost).
 
@@ -33,7 +33,7 @@ Self-Refine: 2 critique rounds × 1 LLM call each = 2 extra LLM calls per query.
 
 ### 3. F3 dual-regime evaluation
 
-Under N1, DSPy in Sprint 4 trains against a 2-judge consensus (Haiku + GPT-4o-mini). Every other ablation (Sprints 2-3, 5-7) uses the 3-judge consensus that includes DeepSeek. The DSPy ablation table numbers are therefore not directly comparable to the other ablation tables. v4 doesn't address this. Two fixes are acceptable: (a) report DSPy on BOTH metrics in its ablation doc (2-judge + 3-judge), with a paragraph explaining why; (b) re-run all ablations against the 2-judge metric after DSPy compilation. (a) is cheap, (b) is honest but expensive — pick (a).
+Under N1, DSPy in Sprint 4 trains against a 2-judge consensus (Haiku + GPT-4o-mini). Every other ablation (Sprints 2-3, 5-7) uses the 3-judge consensus that includes DeepSeek. The DSPy ablation table numbers are therefore not directly comparable to the other ablation tables. v4 doesn't address this. Two fixes are acceptable: (a) report DSPy on BOTH metrics in its ablation doc (2-judge + 3-judge), with a paragraph explaining why; (b) re-run all ablations against the 2-judge metric after DSPy compilation. (a) is cheap, (b) is honest but expensive; pick (a).
 
 ### 4. A7 trace replay needs a metric-scope line
 
@@ -55,7 +55,7 @@ Realistic v4 total: ~185h wall-clock / ~148h with Codex, not 177/142. That's abo
 
 ## D. One thing I'd add to v4
 
-A single line in `docs/v4-frontier-plan.md` under "Honesty calibration policy": **"If A7 trace replay is dropped due to buffer overrun, then no DSPy ablation claim ships — the per-category regression check is the only thing that makes DSPy numbers honest, and without it the headline number can hide a regression."** This makes the dependency chain visible: trace replay isn't optional polish, it gates DSPy publishing.
+A single line in `docs/v4-frontier-plan.md` under "Honesty calibration policy": **"If A7 trace replay is dropped due to buffer overrun, then no DSPy ablation claim ships; the per-category regression check is the only thing that makes DSPy numbers honest, and without it the headline number can hide a regression."** This makes the dependency chain visible: trace replay isn't optional polish, it gates DSPy publishing.
 
 ## E. Final calibration
 
@@ -65,4 +65,4 @@ Execute v4 with three corrections, no replan:
 2. **Recompute Sprint 1 and Sprint 2 totals.** State the 12-16h/week pace honestly so the 8h/week cap can be revisited or sprints replanned.
 3. **Add P12** (trace replay = structural metrics in CI only) **and the "A7 gates DSPy publishing" line**.
 
-Everything else is locked correctly. Two non-negotiables addressed, five recommendations adopted, eleven process improvements logged — Codex's fixes survived translation to v4 faithfully. The remaining issues are arithmetic and one mis-scoped item, not strategic.
+Everything else is locked correctly. Two non-negotiables addressed, five recommendations adopted, eleven process improvements logged; Codex's fixes survived translation to v4 faithfully. The remaining issues are arithmetic and one mis-scoped item, not strategic.

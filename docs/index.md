@@ -23,10 +23,10 @@ Production-grade open-source enterprise knowledge agent. Cross-source agentic re
 
 Every frontier technique ships with a with-vs-without table.
 
-- Self-Refine: [frontier3_self_refine.md](frontier3_self_refine.md) — honest negative; -0.05 to -0.08 on core metrics
-- DSPy compile + wire: [sprint4_dspy_result.md](sprint4_dspy_result.md) + [sprint4_dspy_agent_ablation.md](sprint4_dspy_agent_ablation.md) — honest negative on production metrics
-- MoE synthesize Pareto: [sprint5_moe_pareto.md](sprint5_moe_pareto.md) — cost / quality trade-off across 4 vendors
-- Counterfactual robustness: [sprint6_counterfactual_result.md](sprint6_counterfactual_result.md) — governance held under perturbation
+- Self-Refine: [frontier3_self_refine.md](frontier3_self_refine.md). Negative result on core metrics (-0.05 to -0.08).
+- DSPy compile + wire: [sprint4_dspy_result.md](sprint4_dspy_result.md) and [sprint4_dspy_agent_ablation.md](sprint4_dspy_agent_ablation.md). Negative on production metrics.
+- MoE synthesize Pareto: [sprint5_moe_pareto.md](sprint5_moe_pareto.md). Cost / quality trade-off across 4 vendors.
+- Counterfactual robustness: [sprint6_counterfactual_result.md](sprint6_counterfactual_result.md). Governance held under perturbation.
 
 ## Honesty calibration
 

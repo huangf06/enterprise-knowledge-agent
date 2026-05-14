@@ -45,7 +45,7 @@ below once `scripts/run_multi_judge.py` finishes on both inputs.
 
 ## Diagnosis
 
-The compiled prompt wins the metrics the DSPy training metric saw — and only
+The compiled prompt wins the metrics the DSPy training metric saw; and only
 those. Two failure modes show up on the metrics it did not see.
 
 ### 1. Citation format regression
@@ -67,7 +67,7 @@ generic `[source:N]` form scores zero across the board even though
 
 The root cause: `SynthesizeSignature.__doc__` in `src/agent/dspy_synthesize.py`
 reads "Inline citations of the form `[source:id]`. End with 'Audit: N tool
-calls.' Concise, prioritized." — verbatim. The manual `prompts/synthesize.md`
+calls.' Concise, prioritized."; verbatim. The manual `prompts/synthesize.md`
 follows that same sentence with **six explicit examples**:
 
 ```
@@ -81,7 +81,7 @@ exemplars. The model interprets `[source:id]` as a literal pattern.
 ### 2. Action recommendation regression
 
 The signature output field reads "Synthesized answer with citations + audit
-line" — no mention of recommending a next step. The manual prompt template
+line"; no mention of recommending a next step. The manual prompt template
 does not explicitly mention "next step" either, but the few-shot context and
 the rubric description ("Prioritize by urgency × impact") nudges the model.
 DSPy's terse signature description does not.
@@ -129,7 +129,7 @@ prompt's open-ended rubric score of 0.69 (different scales, but the relative
 improvement is real). The DSPy infrastructure is not the problem; signature
 care is.
 
-## Per v4.1 P15 — dual judge regime addendum
+## Per v4.1 P15: dual judge regime addendum
 
 Multi-judge consensus over the same 10 fast-tier scenarios, both regimes:
 
@@ -151,7 +151,7 @@ the headline delta.
 
 This is exactly the failure mode that v4.1 N1 + P15 were designed to surface.
 Without dual-regime reporting, this ablation would publish "+0.05 lift,
-ship!" — and the production single-judge eval would later contradict it.
+ship!"; and the production single-judge eval would later contradict it.
 
 action_recommend_quality regresses in both regimes; the citation-format
 regression (cite_source_coverage -1.0) is independent of judge regime since

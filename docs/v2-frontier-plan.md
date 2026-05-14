@@ -140,7 +140,7 @@ Each technique: solo-implementable, defensible in interview, tied to recognized 
 ### #6. PAIR auto-adversarial generation (15-20h)
 - **Paper**: Chao et al. 2023, "Jailbreaking Black Box Large Language Models in Twenty Queries" (PAIR)
 - **What**: Replace 10 hand-written adversarial scenarios with auto-generated attacks. Attacker LLM (GPT-4o) generates novel jailbreak prompts targeting our 10 vectors (RBAC bypass, role escalation, etc.). Judge LLM scores defense. Attacker iterates from failures.
-- **Demo result**: "1000 auto-generated adversarial attempts, 0.X% breach rate" — vastly more credible than 10/10 on hand-written.
+- **Demo result**: "1000 auto-generated adversarial attempts, 0.X% breach rate": vastly more credible than 10/10 on hand-written.
 - **Why include**: Production-grade red-team automation; novel demo.
 
 ### #7. Counterfactual robustness evaluation (12-15h)
@@ -190,7 +190,7 @@ Each technique: solo-implementable, defensible in interview, tied to recognized 
 
 ### README header (target)
 ```
-# Enterprise Knowledge Agent — pushing the limit of LLM + RAG
+# Enterprise Knowledge Agent: pushing the limit of LLM + RAG
 
 A flagship cross-source AI agent with 8 frontier techniques wired in:
 
@@ -245,7 +245,7 @@ A flagship cross-source AI agent with 8 frontier techniques wired in:
 ## Open questions for Opus review
 
 1. **Is the 8-technique frontier list genuinely frontier or hype-laden?** Specifically: are any of these past peak relevance or about to be?
-2. **Are the time estimates realistic?** Specifically Frontier #1 (DSPy) — is 15-20h enough to learn + integrate + tune, or is this 40h disguised?
+2. **Are the time estimates realistic?** Specifically Frontier #1 (DSPy); is 15-20h enough to learn + integrate + tune, or is this 40h disguised?
 3. **Sequencing**: should DSPy go before or after Self-Refine? They interact (DSPy can compile the critique prompt).
 4. **What's missing that would actually be more impactful?** Specifically things like:
    - Continuous online eval (production-style A/B)
@@ -262,5 +262,5 @@ A flagship cross-source AI agent with 8 frontier techniques wired in:
 - DeepSeek as primary LLM (multi-LLM only for MoE ablation + judge consensus)
 - Apache 2.0 license
 - Fly.io as deploy target (not AWS)
-- Solo dev — no external coordination
+- Solo dev: no external coordination
 - 12-16 week timeline targeting Sept 2026

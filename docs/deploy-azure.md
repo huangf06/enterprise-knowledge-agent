@@ -2,7 +2,7 @@
 
 > Status: live alongside Fly.io since 2026-05-13. Azure adds a second cloud target for cross-cloud demonstration; Fly.io remains the primary URL cited in the README.
 
-This guide documents the Azure Container Apps deployment of the Enterprise Knowledge Agent. The project is deployed dual-cloud (Fly.io + Azure Container Apps) for the same reason both cloud bullets matter on a resume: each provider exercises a different operational model.
+This guide documents the Azure Container Apps deployment of the Enterprise Knowledge Agent. The project runs dual-cloud (Fly.io + Azure Container Apps) so the same container is exercised against two providers with different operational models.
 
 ## Architecture
 
@@ -135,4 +135,4 @@ The Free Trial credit ($200 over 30 days) absorbs the first month entirely. Past
 
 ## Cross-cloud note
 
-This deploy is intentionally additive. The Fly.io deploy at <https://enterprise-knowledge-agent.fly.dev/> remains the primary live URL and the one cited in the README hero block. Azure adds a second target so the project demonstrates dual-cloud operational fluency. The Fly.io config (`fly.toml`) is untouched by this work.
+This deploy is additive. The Fly.io deploy at <https://enterprise-knowledge-agent.fly.dev/> remains the primary live URL cited in the README hero block. Azure adds a second target so the same image can be exercised on both clouds. The Fly.io config (`fly.toml`) is untouched.

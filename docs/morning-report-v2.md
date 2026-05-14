@@ -1,4 +1,4 @@
-# Morning report v2 — 2026-05-14
+# Morning report v2: 2026-05-14
 
 > Hand-off after the second autonomous session continuing from
 > `docs/overnight-report.md`. All work within Fei's authorized scope
@@ -14,7 +14,7 @@ session left scaffolded but unrun:
    `USE_COMPILED_PROMPTS=1`, ran fast-tier (n=10) OFF vs ON, multi-judged
    both. **Honest negative**: 2-judge regime (DSPy training metric) shows
    +0.05 on `answer_correctness` but the 3-judge regime (the comparison
-   metric used by every other v4 ablation) shows **-0.03** — a Goodhart
+   metric used by every other v4 ablation) shows **-0.03**; a Goodhart
    effect that v4.1 N1+P15 was designed to catch. Plus -1.0 on
    `cite_source_coverage` because the DSPy signature dropped the six
    citation exemplars from `prompts/synthesize.md`. Action_recommend_quality
@@ -27,13 +27,13 @@ session left scaffolded but unrun:
    entity_swap, noise_injection, and doc_deletion.** entity_swap leaves
    answer_correctness unchanged (judge is content-checking, not entity-name
    matching). noise_injection is essentially a no-op (-0.01 ac). doc_deletion
-   crashes ac to 0.20 — the canonical source was removed and the agent can
+   crashes ac to 0.20; the canonical source was removed and the agent can
    not recover, but it also does NOT hallucinate the missing IDs
    (cite_id_grounded stays at 0.83). Graceful degradation, governance held.
    Doc: `docs/sprint6_counterfactual_result.md`.
 
 3. **MoE synthesize Pareto** (Frontier #4): replay across four routes on
-   n=10. **All four routes lie on the Pareto frontier** — none strictly
+   n=10. **All four routes lie on the Pareto frontier**; none strictly
    dominates the others on (quality, cost, latency). DeepSeek is the
    lowest-cost / mid-latency / mid-quality. Sonnet 4.6 is the highest
    quality (+0.07 ac vs DeepSeek), highest cost (32×), and fastest of the
@@ -45,7 +45,7 @@ session left scaffolded but unrun:
 
 Total API spend this session: **~$0.45** (multi-judge OFF $0.07, multi-judge
 ON $0.02, DSPy ON eval ~$0.005, counterfactual fast-tier ~$0.05, MoE Pareto
-$0.17 — Sonnet dominates that line at $0.131). Well under any threshold.
+$0.17; Sonnet dominates that line at $0.131). Well under any threshold.
 
 Commits land on `main`, no force-push.
 
@@ -95,21 +95,21 @@ full deploy state including secrets list and gotchas surfaced.
 
 ## Memory updates I made
 
-- `project_eka_v4_second_session.md` (new) — captures session-closing state
+- `project_eka_v4_second_session.md` (new): captures session-closing state
   including the 3 ablation outcomes, total spend, and the "what only Fei
   can do" set.
 - `MEMORY.md` index updated to point at the new entry.
 
 ## What I did NOT do
 
-- `fly deploy` — gated, requires Fei + Qdrant decision.
-- `git push --force` or any destructive op — never.
-- Modify `.env` or upload secrets — never.
+- `fly deploy`: gated, requires Fei + Qdrant decision.
+- `git push --force` or any destructive op: never.
+- Modify `.env` or upload secrets: never.
 - Re-run the OFF Self-Refine ablation (already done in prior session).
 - DSPy MIPROv2 full compile (the cheaper BootstrapFewShot already converged
   to zero-shot; MIPROv2 at $50-150 budget would not change the answer per
   the prior result writeup).
-- Flip `DEFAULT_MOE.synthesize` from Sonnet 4.6 back to DeepSeek — flagged
+- Flip `DEFAULT_MOE.synthesize` from Sonnet 4.6 back to DeepSeek: flagged
   in Decision #3 for your sign-off since changing it depends on which
   route you actually want as the production default.
 

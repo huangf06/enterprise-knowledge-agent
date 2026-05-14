@@ -67,7 +67,7 @@ Sanitization strips known instruction markers (HTML comment injections, `[INST].
 - Per-tool fine-grained rate limiting (v1.5)
 - Automatic NER-driven PII model (v1.5)
 
-These are explicit gaps the README acknowledges. The agent demonstrates the *pattern* — not a production federation implementation.
+These are explicit gaps the README acknowledges. The agent demonstrates the *pattern*, not a production federation implementation.
 
 ## Adversarial regression
 

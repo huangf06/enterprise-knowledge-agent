@@ -22,7 +22,7 @@ Each scenario has:
 - Expected action (what next step the agent should recommend)
 - Governance constraints (what must NOT leak)
 
-The LLM-as-judge prompt scores each axis 0..1. Tool selection is also algorithmically scored by comparing actual `tools_used` to `expected_sources` — the LLM judge's `tool_selection_quality` is a tiebreaker.
+The LLM-as-judge prompt scores each axis 0..1. Tool selection is also algorithmically scored by comparing actual `tools_used` to `expected_sources`; the LLM judge's `tool_selection_quality` is a tiebreaker.
 
 ## What we won't claim
 

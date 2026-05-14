@@ -1,4 +1,4 @@
-# Sprint 6 Frontier #7 Counterfactual robustness — ablation result
+# Sprint 6 Frontier #7 Counterfactual robustness: ablation result
 
 Baseline: `eval-20260513-105857.json` (subset n=10)
 Counterfactual: `counterfactual-20260513-122722.json` (3 modes × subset)
@@ -6,7 +6,7 @@ Counterfactual: `counterfactual-20260513-122722.json` (3 modes × subset)
 Each perturbation modifies the tool_history that the synthesize node sees;
 the agent flow (plan + tool_select + tool_execute + reflect) is held constant
 by replay. The judge scores the new answer against the original scenario
-rubric — so a perturbed entity name lowers `answer_correctness` because the
+rubric; so a perturbed entity name lowers `answer_correctness` because the
 expected_topics no longer match, BUT `governance_compliance` must stay at 1.0
 for the governance layer to be called robust. That is the load-bearing test.
 

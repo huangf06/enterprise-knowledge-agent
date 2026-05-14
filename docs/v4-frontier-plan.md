@@ -25,8 +25,8 @@ Plus 6 smaller hazards across the 4 frontier techniques, 8 missing Sprint 1 day-
 
 | # | Change | Source | Effort |
 |---|---|---|---|
-| **R1** | **Add A7 trace replay regression harness.** Capture real traces from F7 Sprint-1 deploy, serialize with gold answers, replay against every new graph version in CI. Catches per-category regressions invisible in headline metric. Generates A4 case study material organically. Keep A4 (failure case study) AND add trace replay — they compound. | Codex F | +6-8h |
-| **R2** (v4.1 corrected) | **Keep Self-Refine (Madaan 2023) cite.** Critique node reads `(question, final_answer)` only per P6 — prose-only. CRITIC-style tool-calling critique (Gou 2024) is v1.5 next-step; requires graph restructure (+6-10h) to route critique → tool_select → tool_execute → critique, which doesn't fit the v4 budget. Reverting cite avoids the misnaming failure mode (citing CRITIC while implementing Self-Refine). | Codex B4 + r2 B1 | 0h |
+| **R1** | **Add A7 trace replay regression harness.** Capture real traces from F7 Sprint-1 deploy, serialize with gold answers, replay against every new graph version in CI. Catches per-category regressions invisible in headline metric. Generates A4 case study material organically. Keep A4 (failure case study) AND add trace replay; they compound. | Codex F | +6-8h |
+| **R2** (v4.1 corrected) | **Keep Self-Refine (Madaan 2023) cite.** Critique node reads `(question, final_answer)` only per P6; prose-only. CRITIC-style tool-calling critique (Gou 2024) is v1.5 next-step; requires graph restructure (+6-10h) to route critique → tool_select → tool_execute → critique, which doesn't fit the v4 budget. Reverting cite avoids the misnaming failure mode (citing CRITIC while implementing Self-Refine). | Codex B4 + r2 B1 | 0h |
 | **R3** | **Counterfactual entity-swap restricted to non-protagonist entities.** "EY contract" → "PwC contract", NOT "Sarah" → "Alice". Avoids regenerating synthetic data + avoids retesting injection guard on names it wasn't tuned for. | Codex B5, B6 | -2 to -4h (saves regeneration) |
 | **R4** | **Quick-eval at 3 tiers**: smoke (3 scenarios, <30s), fast (10 scenarios, <5min), full (30 scenarios). Mitigates eval-loop slowness as scope compounds. | Codex D | +1h |
 | **R5** | **Sprint 1 day-1 checklist expanded from 3 → 11 items.** See section "Sprint 1 day-1 checklist" below. | Codex E | +1-2h |
@@ -61,7 +61,7 @@ Plus 6 smaller hazards across the 4 frontier techniques, 8 missing Sprint 1 day-
 
 ### Rejected from v3 review (Codex disagreed with Opus, kept v3 stance)
 
-- **PRM cut**: Codex agrees with cut but offered "rescue" via ProcessBench / Generative Reward Models. Rescue rejected — Langfuse per-node tracing already gives the visible artifact, no need to reintroduce.
+- **PRM cut**: Codex agrees with cut but offered "rescue" via ProcessBench / Generative Reward Models. Rescue rejected: Langfuse per-node tracing already gives the visible artifact, no need to reintroduce.
 - **Constitutional cut**: Codex agrees with cut but corrects Opus's reasoning. Stance now: "Cut because marginal lift is zero, not because technique is fake." Captured in O1.
 - **DSPy 30h budget pessimistic**: Codex argues 15-25h realistic. Keep 30h as ceiling for safety; gate at week 9 day 2 (not week 10) per P1.
 - **NIAH cut**: both reviewers agree, keep cut.
@@ -73,14 +73,14 @@ Plus 6 smaller hazards across the 4 frontier techniques, 8 missing Sprint 1 day-
 
 (F1-F8 same as v3 except F5/F9 cut; +2h for v1 baseline run on day 1)
 
-- F1 Structured outputs judge (4h) — extended P9 to also cover critique node
+- F1 Structured outputs judge (4h): extended P9 to also cover critique node
 - F2 RAGAS 4-metric integration (8h)
-- F3 Multi-LLM-judge consensus + inter-judge kappa (6h) — N1 locks DeepSeek out during DSPy training
+- F3 Multi-LLM-judge consensus + inter-judge kappa (6h): N1 locks DeepSeek out during DSPy training
 - F4 Algorithmic citation groundedness (4h)
-- F6 Trajectory eval (6h) — O2 adds BFCL cross-reference
+- F6 Trajectory eval (6h): O2 adds BFCL cross-reference
 - F7 Public deploy + Langfuse + OpenTelemetry (15h)
 - F8 mkdocs documentation site (4h)
-- **N2 v1 cost/latency baseline (2h)** — NEW Sprint 1 day-1
+- **N2 v1 cost/latency baseline (2h)**: NEW Sprint 1 day-1
 
 ### Frontier layer (4 techniques, ~70h, slightly leaner)
 
@@ -94,10 +94,10 @@ Plus 6 smaller hazards across the 4 frontier techniques, 8 missing Sprint 1 day-
 - A1 Retrieval ablation (BM25/BGE-M3/hybrid/+reranker) (4h)
 - A2 Reranker (Cohere or BGE) (4h)
 - A3 Semantic cache + cost/latency leaderboard (8h)
-- A4 Failure mode case study (6h) — generated from trace replay data
+- A4 Failure mode case study (6h): generated from trace replay data
 - A5 Quick-eval 3-tier (smoke/fast/full) (2h+1h = 3h with R4)
 - A6 Honest ablation table per frontier technique (embedded)
-- **A7 Trace replay regression harness (6-8h)** — NEW per R1
+- **A7 Trace replay regression harness (6-8h)**: NEW per R1
 
 ### Polish
 
@@ -125,11 +125,11 @@ Reviewer recommended (a). Track A collision in those 4 weeks → automatically f
 
 **Next-to-drop order if buffer overrun (after PAIR)**:
 1. PAIR (already optional)
-2. MoE vendor outage fallback (4h) — document risk in failure-modes.md instead
-3. F8 mkdocs site (4h) — use GitHub-rendered docs/ folder instead
-4. A2 reranker (4h) — keep BGE-M3 single-stage retrieval
-5. O1-O3 paper citations (1h) — minimal loss
-6. (stop) — any further cut hits load-bearing items; replan instead
+2. MoE vendor outage fallback (4h); document risk in failure-modes.md instead
+3. F8 mkdocs site (4h); use GitHub-rendered docs/ folder instead
+4. A2 reranker (4h); keep BGE-M3 single-stage retrieval
+5. O1-O3 paper citations (1h); minimal loss
+6. (stop); any further cut hits load-bearing items; replan instead
 
 v3 was 143h/115h. v4 adds 18-23h for Codex's non-negotiables + recommendations.
 
@@ -137,17 +137,17 @@ v3 was 143h/115h. v4 adds 18-23h for Codex's non-negotiables + recommendations.
 
 Must verify BEFORE writing any new code (~3h budget):
 
-1. **DeepSeek 1M context coherence past 200K tokens** — test with synthetic 250K-token prompt, verify output not gibberish
-2. **Langfuse Cloud public dashboard reachable** — sign up, verify public read-only mode works
+1. **DeepSeek 1M context coherence past 200K tokens**; test with synthetic 250K-token prompt, verify output not gibberish
+2. **Langfuse Cloud public dashboard reachable**; sign up, verify public read-only mode works
 3. **Multi-vendor LLM keys validated**: Anthropic + OpenAI keys both produce non-zero responses
-4. **Cohere rerank-v3 API key + free-tier quota** — verify 1000-call quota sufficient for eval × ablation × counterfactual
-5. **RAGAS langchain dep tree compatibility** — `uv add ragas` + import test + check langchain-core version conflicts with langgraph
-6. **OpenAI prompt-cache + token budget alarms** — set hard usage cap ($100/month) via dashboard
-7. **Anthropic prompt-caching beta header path** — EU region account may need explicit opt-in; test cache_read_input_tokens > 0 on repeat
-8. **Fly.io paid plan + region (ams) + memory tier** — verify free tier insufficient; commit to ~$5-10/month
-9. **v1 cost/latency baseline run** (N2) — 30 scenarios with per-node token counts, USD at DeepSeek list, p50/p95
+4. **Cohere rerank-v3 API key + free-tier quota**; verify 1000-call quota sufficient for eval × ablation × counterfactual
+5. **RAGAS langchain dep tree compatibility**; `uv add ragas` + import test + check langchain-core version conflicts with langgraph
+6. **OpenAI prompt-cache + token budget alarms**; set hard usage cap ($100/month) via dashboard
+7. **Anthropic prompt-caching beta header path**; EU region account may need explicit opt-in; test cache_read_input_tokens > 0 on repeat
+8. **Fly.io paid plan + region (ams) + memory tier**; verify free tier insufficient; commit to ~$5-10/month
+9. **v1 cost/latency baseline run** (N2); 30 scenarios with per-node token counts, USD at DeepSeek list, p50/p95
 10. **DSPy 2.5+ version pin** in pyproject.toml + signature compatibility check with existing prompts
-11. **GitHub Pages + custom domain DNS prep** for F8 — start propagation now since may take 24-48h
+11. **GitHub Pages + custom domain DNS prep** for F8; start propagation now since may take 24-48h
 
 The first 3 are blocking; 4-8 will silently fail in week 4-7 without day-1 verification; 9 is the load-bearing baseline; 10-11 are cheap prep.
 
@@ -176,7 +176,7 @@ The first 3 are blocking; 4-8 will silently fail in week 4-7 without day-1 verif
 2. Every frontier technique ships with "with vs without" ablation table
 3. State attacker model strength explicitly if PAIR ships
 4. State cost/quality trade-off for MoE routing
-5. **(v4.1 NEW per r2 D)** **If A7 trace replay is dropped due to buffer overrun, then no DSPy ablation claim ships** — the per-category regression check is the only thing that makes DSPy numbers honest, and without it the headline number can hide a regression. A7 is not optional polish; it gates DSPy publishing.
+5. **(v4.1 NEW per r2 D)** **If A7 trace replay is dropped due to buffer overrun, then no DSPy ablation claim ships**; the per-category regression check is the only thing that makes DSPy numbers honest, and without it the headline number can hide a regression. A7 is not optional polish; it gates DSPy publishing.
 6. **(v4.1 NEW per P15)** DSPy ablation doc reports BOTH 2-judge (training metric, no DeepSeek) AND 3-judge (comparison metric used elsewhere) numbers, with one paragraph explaining the dual regime.
 7. Honest README sentence: link to `docs/v4-frontier-plan.md` for the active plan.
 
@@ -213,7 +213,7 @@ Same as v3, plus:
 
 ## What to do next
 
-Sprint 1 day-1 — the 11-item verification checklist + v1 baseline run + Fly.io deploy + F1 structured outputs.
+Sprint 1 day-1; the 11-item verification checklist + v1 baseline run + Fly.io deploy + F1 structured outputs.
 
 **Specifically:**
 
@@ -223,4 +223,4 @@ Sprint 1 day-1 — the 11-item verification checklist + v1 baseline run + Fly.io
 4. Rewrite judge.py with `messages.parse` + Pydantic `JudgeScore` (F1 ~4h)
 5. A1 retrieval ablation (~4h) + A2 reranker (~4h)
 
-Sprint 1 target: **32h over 2 weeks at 16h/week** (v4.1 corrected; exceeds 8h/week burnout cap — accept higher pace for Sprints 1-2 only, taper from Sprint 3).
+Sprint 1 target: **32h over 2 weeks at 16h/week** (v4.1 corrected; exceeds 8h/week burnout cap; accept higher pace for Sprints 1-2 only, taper from Sprint 3).
