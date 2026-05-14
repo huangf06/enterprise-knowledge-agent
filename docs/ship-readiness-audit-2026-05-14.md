@@ -38,7 +38,7 @@
 
 | ID | Finding | Severity | Recommendation |
 |---|---|---|---|
-| B1 | README 前 7 行命中卖点: 跨源 6 SaaS, 实盘 URL, Langfuse trace, 还附了一条可点的 curl。**5 分钟评分 7/10**, 缺一个一句话的"hero claim"在最顶上回答"为啥 recruiter 要花 10 分钟"。当前第一行 "Production-grade open-source enterprise knowledge agent" 是个名词短语, 不是 claim。 | should-fix | 在第一行下补一句 hero claim, e.g. "Ships 4 frontier-technique ablations with honest with-vs-without tables, including 3 negatives. Live demo + 101/101 tests + audit log." 这就是你的差异化。 |
+| B1 | README 前 7 行命中卖点: 跨源 6 SaaS, 实盘 URL, Langfuse trace, 还附了一条可点的 curl。**5 分钟评分 7/10**, 缺一个一句话的 hero claim 在最顶上回答"为啥 recruiter 要花 10 分钟"。当前第一行是名词短语, 不是 claim。 | should-fix | 在第一行下补一句 hero claim, 列出 4 个 frontier ablation 表、live demo URL、test 通过数。这就是差异化。 |
 | B2 | Leaderboard 表 + 每类 breakdown + 4 行 frontier ablation 表都在第一屏 (前 60 行 README)。**做得好**, 比 95% 的 portfolio 直观。 | informational | 保持。 |
 | B3 | `grep -rn "TBD\|TODO\|FIXME\|XXX\|placeholder" docs/ README.md` 结果: (a) `docs/a3_semantic_cache.md` 三处 TBD 是真实 placeholder; (b) `docs/blog-outline.md` 一处 `{INSERT_NUMBERS_HERE}`; (c) `docs/v3-frontier-plan.md` 多处 TBD, 是历史草稿, mkdocs nav 把它放在 "History (superseded)" 下, 可以接受; (d) `docs/v2-plan-opus-review.md` 一处 TBD, 也是 superseded。 | should-fix | a3_semantic_cache.md 改成 "Not measured in v4 (deferred to v1.5)" 之类明确说法, 或从 mkdocs nav 拿掉。blog-outline.md 的 `{INSERT_NUMBERS_HERE}` 现在已经能填: DSPy 段就把 sprint4_dspy_agent_ablation.md 的数字搬过来。 |
 | B4 | `https://huangf06.github.io/enterprise-knowledge-agent/` → HTTP 200, mkdocs material 已 render。site/ 目录已 build 进 repo (35 个 md 都 export 了)。 | informational | 保持。site/ 目录 commit 进 repo 看起来是 GH Pages 用 docs.yml workflow 自动 deploy, 不是手 push, 可以确认一下。 |

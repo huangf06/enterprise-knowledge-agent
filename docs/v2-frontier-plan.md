@@ -141,7 +141,7 @@ Each technique: solo-implementable, defensible in interview, tied to recognized 
 - **Paper**: Chao et al. 2023, "Jailbreaking Black Box Large Language Models in Twenty Queries" (PAIR)
 - **What**: Replace 10 hand-written adversarial scenarios with auto-generated attacks. Attacker LLM (GPT-4o) generates novel jailbreak prompts targeting our 10 vectors (RBAC bypass, role escalation, etc.). Judge LLM scores defense. Attacker iterates from failures.
 - **Demo result**: "1000 auto-generated adversarial attempts, 0.X% breach rate": vastly more credible than 10/10 on hand-written.
-- **Why include**: Production-grade red-team automation; novel demo.
+- **Why include**: automated red-teaming over a wide attack surface; novel demo.
 
 ### #7. Counterfactual robustness evaluation (12-15h)
 - **Paper**: Liu et al. 2024 "Noise Robustness in RAG"; CRAG (Meta 2024)

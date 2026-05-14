@@ -1,11 +1,10 @@
 # HotpotQA full-agent benchmark
 
-A public benchmark anchor for EKA's agentic multi-hop reasoning. The
-README already cites a retrieval-only HotpotQA F1 (BGE-M3 top-2 +
-DeepSeek extraction, EM=0.28, F1=0.29). This page adds the FULL-AGENT
-mode number, where the same 5-node LangGraph loop EKA uses for the
-enterprise scenarios drives `retrieve_passage` over the question's
-10-paragraph candidate pool, then synthesizes a short answer.
+EKA on the HotpotQA dev distractor set, full-agent mode. The README
+already cites a retrieval-only HotpotQA F1 (BGE-M3 top-2 + DeepSeek
+extraction, EM=0.28, F1=0.29). This page reports the F1 when the
+5-node LangGraph loop drives `retrieve_passage` over the question's
+10-paragraph candidate pool and synthesizes a short answer.
 
 ## 1. Setup
 
@@ -63,7 +62,7 @@ Per-question-type split (first 100 dev examples are all `level=hard` in source o
 | comparison | 21 | 0.887 |
 | bridge | 79 | 0.797 |
 
-Comparison questions (typically yes/no over two entities) score noticeably higher than bridge questions (require chaining the answer of one hop into the next). The split is consistent with published agent results on HotpotQA distractor.
+Comparison questions (yes/no over two entities) score higher than bridge questions (need to chain one hop's answer into the next), consistent with published agent results on HotpotQA distractor.
 
 <!-- RUN_RESULT_TABLE_END -->
 
@@ -76,7 +75,7 @@ Comparison questions (typically yes/no over two entities) score noticeably highe
 | Retrieval-only (this repo, n=100, BGE-M3 top-2 + DeepSeek extraction) | 0.290 | retrieval table in README |
 | **EKA full agent (this benchmark)** | **0.816** | n=100, dev distractor, BGE-M3 top-3, DeepSeek V4 Pro 5-node agent loop |
 
-The 2.8x lift over the retrieval-only number in the same repo is the value of the agent loop (planning, multi-hop tool calls, reflection). The 1.7x lift over the strongest ReAct number in the paper reflects model+agent together: DeepSeek V4 Pro is a 2025-era model and PaLM-540B is 2022. The point of citing the older paper is not to claim a fair head-to-head with 2022 PaLM, but to anchor the order of magnitude against the most-cited published baseline.
+The 2.8x lift over the retrieval-only row in the same repo measures the agent loop alone (planning, multi-hop tool calls, reflection) on identical retrieval. The 1.7x lift over the strongest ReAct number is model + agent together: DeepSeek V4 Pro is a 2025 model and PaLM-540B is 2022, so this is not a fair head-to-head. The ReAct row is here as a published order-of-magnitude anchor.
 
 ## 4. Failure analysis
 
@@ -90,15 +89,17 @@ Five representative failures (F1=0 examples), all `level=hard`:
 | Confused related characters in the same franchise | "This singer of A Rather Blustery Day also voiced what hedgehog?" | Sonic | Dr. Robotnik |
 | Question-type misread (gave yes/no when an entity was asked) | "Kaiser Ventures corporation was founded by an American industrialist who became known as the father of modern American shipbuilding..." | Henry J. Kaiser | Yes |
 
-The clusters above are not unique to this benchmark: bridge-hop entity confusion and yes/no polarity errors are the two failure modes ReAct paper Section 5 also flags. The "refused to commit" pattern is more idiosyncratic to the synthesize prompt EKA uses for the enterprise scenarios, where over-claiming on missing evidence is the bigger risk; a HotpotQA-specific prompt that pushes the model to commit when retrieval did return a candidate paragraph would likely close some of these.
+Bridge-hop entity confusion and yes/no polarity errors are the same two clusters ReAct paper Section 5 reports. The "refused to commit" pattern is specific to EKA's synthesize prompt, which is tuned for the enterprise scenarios where over-claiming on missing evidence matters more. A HotpotQA-specific prompt that pushes the model to commit when retrieval did return a candidate paragraph would likely close some of these.
 
-## 5. What this doesn't claim
+## 5. Scope and limits
 
-- This is dev distractor, not fullwiki. Open-book is harder.
-- n=100 not the full 7405. The sampling protocol is deterministic so any
-  later n-extension is reproducible.
-- DeepSeek V4 Pro is a strong base model; the result reflects model + agent
-  together, not the agent alone.
-- The retrieval component sanity row (BGE-M3 top-2 + extraction, F1=0.29) is
-  kept in the README leaderboard alongside this number, because the gap
-  between the two is the value-add of the multi-hop agent loop.
+- Dev distractor, not fullwiki. The retrieval pool of 10 candidate
+  paragraphs is meaningfully easier than open-book Wikipedia.
+- n=100, not the full 7405. The sampling is the first n in source
+  order, so the run is reproducible and any later n-extension lands
+  byte-stable.
+- DeepSeek V4 Pro is a strong base model. The result is model and
+  agent together; isolating the agent contribution would require
+  re-running with a weaker LLM.
+- The retrieval-only row stays in the README leaderboard so the gap
+  to the full-agent row stays visible.

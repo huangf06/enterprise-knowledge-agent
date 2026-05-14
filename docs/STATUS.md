@@ -27,7 +27,7 @@
 - LLM-as-judge harness (`src/eval/judge.py`) with 3-vendor multi-judge consensus (Anthropic + OpenAI + DeepSeek)
 - Retrieval sanity scorers (HotpotQA + MS Marco) with both naive and llm-answer modes
 - HotpotQA full-agent benchmark, n=100 dev distractor: F1=0.816, EM=0.690 (`src/eval/hotpotqa_*.py`, `docs/hotpotqa_agent_result.md`)
-- 4 frontier-technique ablations with with-vs-without tables (Self-Refine, DSPy compilation, multi-LLM MoE, counterfactual robustness)
+- 4 frontier-technique ablations published with-vs-without (Self-Refine, DSPy compilation, multi-LLM MoE, counterfactual robustness)
 
 ### Infra
 - `docker-compose.yml` (Qdrant + Postgres + API container)
@@ -42,7 +42,7 @@
 - `docs/architecture.md` (per-layer diagram + module reuse table)
 - `docs/governance-design.md` (cross-source policy pattern framing)
 - `docs/failure-modes.md` (10 failure modes documented)
-- `docs/eval-methodology.md` (closed-loop honest chapter, blog draft)
+- `docs/eval-methodology.md` (single-author calibration write-up)
 - `docs/case-study-hr-helpdesk.md` (Demo 2)
 - `docs/deploy.md` (Fly.io + HF Space + AWS deferred)
 - `docs/deploy-azure.md` (Azure Container Apps all-sidecar architecture, dual-cloud reproduction)

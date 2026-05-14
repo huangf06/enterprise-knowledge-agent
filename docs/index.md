@@ -1,6 +1,6 @@
 # Enterprise Knowledge Agent
 
-Production-grade open-source enterprise knowledge agent. Cross-source agentic reasoning over six SaaS surfaces (Slack / Jira / Calendar / GitHub / GDocs / Email) with auditable cross-source policy enforcement.
+Open-source enterprise knowledge agent. Reasons across six SaaS surfaces (Slack, Jira, Calendar, GitHub, GDocs, Email) with auditable cross-source policy enforcement.
 
 - **Live demo**: <https://enterprise-knowledge-agent.fly.dev/>
 - **Repo**: [github.com/huangf06/enterprise-knowledge-agent](https://github.com/huangf06/enterprise-knowledge-agent)
@@ -28,6 +28,6 @@ Every frontier technique ships with a with-vs-without table.
 - MoE synthesize Pareto: [sprint5_moe_pareto.md](sprint5_moe_pareto.md). Cost / quality trade-off across 4 vendors.
 - Counterfactual robustness: [sprint6_counterfactual_result.md](sprint6_counterfactual_result.md). Governance held under perturbation.
 
-## Honesty calibration
+## Calibration
 
-Per v4.1 plan section *Honesty calibration policy*, every published leaderboard number ships with a "with vs without" ablation.
+Every published leaderboard number ships with a with-vs-without ablation.

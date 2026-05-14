@@ -2,7 +2,7 @@
 
 > Status: live alongside Fly.io since 2026-05-13. Azure adds a second cloud target for cross-cloud demonstration; Fly.io remains the primary URL cited in the README.
 
-This guide documents the Azure Container Apps deployment of the Enterprise Knowledge Agent. The project runs dual-cloud (Fly.io + Azure Container Apps) so the same container is exercised against two providers with different operational models.
+Azure Container Apps deployment for EKA. The project also runs on Fly.io; both clouds serve the same image so the stack stays exercised against two providers.
 
 ## Architecture
 
@@ -36,7 +36,7 @@ Implication: the API works on a cold start even before any ingestion step. If yo
 
 ## Reproduce
 
-The `infra/azure/deploy.sh` script captures the full sequence; the steps below are the same commands, surfaced for review. Run from repo root.
+The `infra/azure/deploy.sh` script runs the full sequence. Steps below are the same commands, laid out for review. Run from repo root.
 
 ```bash
 # 1. Resource group and provider registrations
@@ -112,7 +112,7 @@ curl "https://$FQDN/health"
 
 ## Cost estimate
 
-Best estimate at the warm baseline (one Postgres replica + one Qdrant replica + scale-to-zero API):
+Warm baseline (one Postgres replica, one Qdrant replica, scale-to-zero API):
 
 | Component | SKU | Monthly cost (approx) |
 |---|---|---:|
@@ -123,16 +123,16 @@ Best estimate at the warm baseline (one Postgres replica + one Qdrant replica + 
 | eka-postgres | min 1 max 1, 0.5 vCPU + 1 GiB | ~$10-15 (always-on past free tier) |
 | **Total** | | **~$20-35/mo at burn-rate**, $0 inside the free trial credit window |
 
-The Free Trial credit ($200 over 30 days) absorbs the first month entirely. Past the credit window, scaling Qdrant + Postgres to min 0 is not safe for stateful workloads, so the realistic steady-state cost is in the $20-35 band. Fly.io remains the primary URL precisely because that deploy is single-app and steady-state cheaper (~$5-10/mo).
+The Free Trial credit ($200 over 30 days) covers the first month. After that, scaling Qdrant and Postgres to min 0 is not safe for stateful workloads, so the steady-state cost sits in the $20-35 band. Fly.io stays the primary URL because that deploy is single-app and runs at $5-10/mo.
 
 ## Gotchas
 
-- **No persistent volumes.** Container Apps does not mount Azure Files by default. Qdrant collections and the Postgres audit log are ephemeral; both rebuild on cold restart. The synthetic dataset is byte-deterministic from `seed=42`, so this is acceptable for a portfolio demo. Adding Azure Files mounts is v1.5 scope.
-- **ACR Tasks disabled on free tier.** The `az acr build` cloud-build path returns `TasksOperationsNotAllowed` on free-trial subscriptions. Use local `docker build` + `docker push` instead, as documented above.
-- **Internal ingress uses environment DNS.** Inside the env, `http://eka-qdrant` resolves to the qdrant app. There is no extra service discovery glue.
-- **Free tier provider registration.** First-time use of Container Apps requires registering `Microsoft.App`, `Microsoft.OperationalInsights`, and `Microsoft.ContainerRegistry`. The `deploy.sh` script does this idempotently.
+- **No persistent volumes.** Container Apps does not mount Azure Files by default. Qdrant collections and the Postgres audit log are ephemeral and rebuild on cold restart. The synthetic dataset is byte-deterministic from `seed=42`, so the rebuild is reproducible. Azure Files mounts are v1.5 scope.
+- **ACR Tasks disabled on free tier.** `az acr build` returns `TasksOperationsNotAllowed` on free-trial subscriptions. Use local `docker build` + `docker push` (above).
+- **Internal ingress uses environment DNS.** Inside the env, `http://eka-qdrant` resolves to the qdrant app. No extra service discovery glue.
+- **Free tier provider registration.** First-time use of Container Apps needs `Microsoft.App`, `Microsoft.OperationalInsights`, and `Microsoft.ContainerRegistry` registered. The `deploy.sh` script does this idempotently.
 - **Secret rotation.** Secrets are scoped to the Container App. Rotate via `az containerapp secret set -n eka-api --secrets <name>=<value>`, then `az containerapp revision restart -n eka-api`.
 
 ## Cross-cloud note
 
-This deploy is additive. The Fly.io deploy at <https://enterprise-knowledge-agent.fly.dev/> remains the primary live URL cited in the README hero block. Azure adds a second target so the same image can be exercised on both clouds. The Fly.io config (`fly.toml`) is untouched.
+Fly.io stays the primary URL in the README hero. The Azure deploy is additive; `fly.toml` is untouched.

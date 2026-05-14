@@ -1,8 +1,8 @@
 # Enterprise Knowledge Agent
 
-Production-grade open-source enterprise knowledge agent. Cross-source agentic reasoning over six SaaS surfaces (Slack / Jira / Calendar / GitHub / GDocs / Email) with auditable cross-source policy enforcement.
+Open-source enterprise knowledge agent. Reasons across six SaaS surfaces (Slack, Jira, Calendar, GitHub, GDocs, Email) with auditable cross-source policy enforcement.
 
-Ships four frontier-technique ablations with honest with-vs-without tables (three negatives, one positive), HotpotQA full-agent F1 of 0.816 (n=100 dev distractor) anchored against the ReAct paper baseline of 0.473, dual-cloud live deploy (Fly.io + Azure Container Apps), Langfuse tracing, and 117 / 117 tests.
+HotpotQA full-agent F1 = 0.816 on n=100 dev distractor (vs ReAct paper 0.473). Four frontier-technique ablations published with-vs-without (three negative, one positive). Dual-cloud live deploy on Fly.io and Azure Container Apps. Langfuse trace on every request. 117 / 117 tests.
 
 > All data is synthetic and byte-deterministic from `seed=42`. No real customer data, no PII. Governance is a *pattern demo* on synthetic identity, not Okta / Azure AD federation (v1.5 scope).
 
@@ -23,7 +23,7 @@ curl -N -X POST https://enterprise-knowledge-agent.fly.dev/query \
 
 ## Leaderboard
 
-Self-authored cross-source briefing benchmark, 30 knowledge-worker scenarios. LLM-judge with single-author calibration; v4 adds multi-judge consensus (Anthropic Haiku 4.5 + OpenAI gpt-4o-mini + DeepSeek) on every published ablation per the v4.1 honesty calibration policy. See `docs/eval-methodology.md` for the closed-loop chapter.
+Self-authored benchmark of 30 cross-source knowledge-worker scenarios. LLM-judge with single-author calibration. v4 adds multi-judge consensus (Anthropic Haiku 4.5, OpenAI gpt-4o-mini, DeepSeek) on every published ablation. The closed-loop calibration risk is discussed in `docs/eval-methodology.md`.
 
 | Metric | v1 DeepSeek baseline | Notes |
 |---|---:|---|
@@ -36,7 +36,7 @@ Self-authored cross-source briefing benchmark, 30 knowledge-worker scenarios. LL
 | Avg latency per query (s) | 150 | wallclock end-to-end, p50 163s, p95 234s |
 | Cost per query (USD) | $0.0036 | DeepSeek V4 Pro pricing, includes plan / tool_select / reflect / synthesize |
 
-Per-category breakdown (the agent is strongest on multi_step and decision_support, weakest on conflict_resolution; tool selection is high across the board, governance compliance is perfect):
+Per-category breakdown:
 
 | Category | n | Answer | Complete | Tools | Gov | Action |
 |---|---:|---:|---:|---:|---:|---:|
@@ -63,7 +63,7 @@ Four frontier techniques shipped with explicit with-vs-without tables.
 | Multi-LLM MoE (synthesize routing) | 4 vendors × n=10 fast-tier | **DeepSeek default**: Sonnet 4.6 lift is +0.07 (within n=10 noise floor) at 32× cost. All four vendors lie on the Pareto frontier; default to DeepSeek with Sonnet 4.6 as opt-in per-request | [docs/sprint5_moe_pareto.md](docs/sprint5_moe_pareto.md) |
 | Counterfactual robustness | 3 perturbations × n=10 fast-tier | **Governance held at 1.00 across all perturbations**; doc_deletion drops answer_correctness to 0.0-0.3 (graceful degradation, no hallucination of removed sources) | [docs/sprint6_counterfactual_result.md](docs/sprint6_counterfactual_result.md) |
 
-The two negatives (Self-Refine, DSPy) are kept as code paths behind env flags and shipped with the diagnosis docs above. Many production LLM systems ship those techniques claim-only with no ablation; v4 ships the table even when it does not favor the technique. That is the differentiation, not the optimization.
+Self-Refine and DSPy are kept as env-flag-gated code paths so per-workload tuning can re-validate the call. The diagnosis docs above carry the per-metric deltas.
 
 Public benchmarks (anchored against external baselines):
 
@@ -109,8 +109,8 @@ For the full container stack: run `generate_data.py` first, then `docker compose
 ## Differentiation
 
 - **Cross-source policy engine pattern over six SaaS surfaces.** `#leadership` channel and HR-private GDocs are denied to managers via a yaml policy table and an audit log records every decision. This is a *pattern demo* on synthetic identity; production federation (Okta / Azure AD / SAML) is v1.5 scope. See `docs/governance-design.md`.
-- **Self-authored 30-scenario cross-source briefing eval, with the closed-loop risk surfaced explicitly.** LLM-judge prompt, rubric, scenarios, synthetic data, and tool outputs are all open and byte-reproducible from `seed=42`. The methodology blog (`docs/eval-methodology.md`) addresses single-author calibration head-on.
-- **Multi-judge consensus on every published ablation, with judge-pool isolation.** Anthropic Haiku 4.5 + OpenAI gpt-4o-mini + DeepSeek judge each ablation; DSPy training metric drops DeepSeek (the agent's primary) per v4.1 N1, and the comparison metric adds it back per v4.1 P15. The DSPy ablation surfaces a real Goodhart reversal under this dual regime (see `docs/sprint4_dspy_agent_ablation.md` "Critical finding"). Most LLM portfolios single-judge; this one publishes the cross-judge dispersion.
+- **Self-authored 30-scenario cross-source briefing eval.** LLM-judge prompt, rubric, scenarios, synthetic data, and tool outputs are byte-reproducible from `seed=42`. Single-author calibration is addressed in `docs/eval-methodology.md`.
+- **Multi-judge consensus with judge-pool isolation.** Anthropic Haiku 4.5, OpenAI gpt-4o-mini, and DeepSeek judge each ablation. The DSPy training metric drops DeepSeek (the agent's primary) per v4.1 N1; the comparison metric adds it back per v4.1 P15. The DSPy ablation flips sign under the dual regime (see `docs/sprint4_dspy_agent_ablation.md` "Critical finding").
 - **Self-hostable and reproducible.** One `docker compose up` brings the entire stack up locally; no proprietary services in the loop except the LLM API. Live on Fly.io since 2026-05-13; deploy guide at `docs/deploy.md`.
 
 ## Architecture
@@ -150,9 +150,9 @@ Full architecture diagram, module reuse table, and the Demo 2 modularity case st
 - `scripts/`: CLIs for generate, run_eval, run_adversarial, gates
 - `.github/workflows/`: CI test, eval-gate, eval-nightly
 
-## Honesty calibration
+## Calibration
 
-The "Three honest negatives" framing (Self-Refine, DSPy under 3-judge, and the Sonnet-MoE-lift-is-within-noise observation) came from running the experiments and publishing the tables as they fell, not from cherry-picking the runs that flattered the techniques. Multi-judge consensus + judge-pool isolation (v4.1 N1+P15) is what made the Goodhart reversal in the DSPy ablation visible at all.
+Three of the four ablations (Self-Refine, DSPy under 3-judge, MoE Sonnet lift within noise) came in negative or null. The tables are published as the runs landed. Multi-judge consensus with judge-pool isolation (v4.1 N1+P15) is what surfaced the Goodhart reversal in the DSPy ablation.
 
 ## License
 

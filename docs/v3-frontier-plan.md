@@ -157,7 +157,7 @@ Reviewer estimate "~95-100h with Codex" was after all 6 cuts AND demoting PAIR. 
 # Enterprise Knowledge Agent
 
 A cross-source enterprise AI agent over 6 SaaS surfaces (Slack/Jira/Calendar/
-GitHub/GDocs/Email) with honest, production-grade evaluation.
+GitHub/GDocs/Email) with reproducible, anchored evaluation.
 
 🔗 Live: enterprise-knowledge-agent.fly.dev
 📊 Public traces: <Langfuse URL>
