@@ -8,16 +8,10 @@ Open-source enterprise knowledge agent. Reasons across six SaaS surfaces (Slack,
 
 ## What this site contains
 
-- **Plan**: the locked v4.1 frontier enhancement plan + the second-pass review notes.
-- **Eval**: per-feature evaluation reports - N2 cost/latency baseline (the canonical reference all frontier deltas compare against), A1 retrieval ablation, F4 citation groundedness.
-- **Reference**: prompts and review artifacts.
-
-## Quick links
-
-- v4 plan: [v4-frontier-plan.md](v4-frontier-plan.md)
-- N2 baseline: [n2_baseline.md](n2_baseline.md)
-- Retrieval ablation: [a1_retrieval_ablation.md](a1_retrieval_ablation.md)
-- Citation groundedness metric: [f4_citation_groundedness.md](f4_citation_groundedness.md)
+- **Architecture**: system overview, governance design, failure modes, eval methodology.
+- **Frontier ablations**: per-technique with-vs-without tables (Self-Refine, DSPy, MoE, counterfactual).
+- **Benchmarks**: HotpotQA full-agent result, adversarial coverage.
+- **Deploy**: Fly.io and Azure Container Apps reproduction guides.
 
 ## Frontier ablations
 

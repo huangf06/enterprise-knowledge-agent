@@ -87,7 +87,7 @@ curl -N -X POST https://enterprise-knowledge-agent.fly.dev/query \
   -d '{"query":"What is on my calendar today?","user_name":"Sarah Chen","user_role":"manager"}'
 ```
 
-Recorded 30-second demo video is pending; `docs/demo-script.md` is the 6-scene shoot script.
+A recorded 30-second demo video is pending.
 
 ## Quickstart
 

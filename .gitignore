@@ -32,3 +32,12 @@ build/
 
 # mkdocs build output
 site/
+
+# Internal planning + working notes (kept local, never committed)
+docs/v*-frontier-plan.md
+docs/v*-plan-*.md
+docs/morning-report*.md
+docs/overnight-report*.md
+docs/ship-readiness-audit*.md
+docs/w[1-4]_report.md
+docs/blog-outline.md

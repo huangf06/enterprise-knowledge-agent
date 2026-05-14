@@ -42,7 +42,7 @@ The HF variant launches the Gradio reveal-panel UI on port 7860; the FastAPI end
 
 ## Option C (deferred, v1.5): AWS ECS Fargate
 
-Terraform / CDK in `infra/aws/`. AWS Fargate runs the API, RDS Postgres holds the audit log, Secrets Manager carries the API key. Listed in `v1.5_backlog.md`.
+Terraform / CDK in `infra/aws/`. AWS Fargate runs the API, RDS Postgres holds the audit log, Secrets Manager carries the API key. Deferred to v1.5.
 
 ## Local-only
 
