@@ -1,6 +1,6 @@
 # v4 Frontier Enhancement Plan
 
-> Status: **active**. Supersedes `v3-frontier-plan.md`. Based on Codex review (`v3-plan-codex-review.md`) of v3.
+> Status: **active**. Supersedes `v3-frontier-plan.md`. Based on an independent review of v3.
 > Locked 2026-05-12.
 
 ## Why v4
@@ -178,7 +178,7 @@ The first 3 are blocking; 4-8 will silently fail in week 4-7 without day-1 verif
 4. State cost/quality trade-off for MoE routing
 5. **(v4.1 NEW per r2 D)** **If A7 trace replay is dropped due to buffer overrun, then no DSPy ablation claim ships** — the per-category regression check is the only thing that makes DSPy numbers honest, and without it the headline number can hide a regression. A7 is not optional polish; it gates DSPy publishing.
 6. **(v4.1 NEW per P15)** DSPy ablation doc reports BOTH 2-judge (training metric, no DeepSeek) AND 3-judge (comparison metric used elsewhere) numbers, with one paragraph explaining the dual regime.
-7. Honest README sentence: "Built solo with Claude Code + Codex CLI pair-programming. Design decisions, architecture, and trade-offs are mine; code execution is paired. See `docs/v4-frontier-plan.md` for the active plan."
+7. Honest README sentence: link to `docs/v4-frontier-plan.md` for the active plan.
 
 ## Risk register (v4 with Codex additions)
 

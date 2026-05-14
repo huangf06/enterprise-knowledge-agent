@@ -13,8 +13,8 @@ This plan implements the reviewer's "minimum viable top 5%" recommendation in fu
 
 - **Author**: Fei, ML Engineer (7+ years data infrastructure, bridging pipelines to production ML).
 - **Goal**: land NL AI Engineer / GenAI Engineer / ML Engineer role. Hire peak ~Sept 2026 (~16 weeks).
-- **Working mode**: solo + Claude Code (Opus 4.7) + Codex CLI. No external coordination.
-- **Real time budget**: 95-100h wall-clock (with Codex 0.8x multiplier, per review correction).
+- **Working mode**: solo. No external coordination.
+- **Real time budget**: 95-100h wall-clock.
 - **This is the LAST portfolio project.** All future work goes in this repo.
 
 ## v1 baseline state (unchanged, locked at commit b38a31d)
@@ -57,8 +57,8 @@ This plan implements the reviewer's "minimum viable top 5%" recommendation in fu
 
 ### Calibration changes
 
-- Codex pair-programming multiplier: **0.6x → 0.8x** (per reviewer §3). 90-105h estimates → 120-140h wall-clock without cuts.
-- After cuts: ~95-100h with Codex realistic.
+- Time estimates recalibrated per reviewer §3. 90-105h → 120-140h wall-clock without cuts.
+- After cuts: ~95-100h realistic.
 - **All projected numbers in README header replaced with "TBD - see ablation table"** until measured. Honesty calibration is the game.
 
 ## v3 scope — what stays
@@ -207,7 +207,7 @@ All cells "TBD - see ablation" until measured. **No pre-committed numbers.**
 2. **Every frontier technique ships with a "with vs without" ablation table** in docs/abl-*.md. If with < without, report that honestly.
 3. **State attacker model strength** if PAIR is shipped. "0% breach against GPT-4o-mini attacker, N=200" not "0% breach rate".
 4. **State cost/quality trade-off** for MoE routing. "30% cost saving at 4% quality loss" not "30% cost saving" alone.
-5. **Honest README sentence** at the top: "Built solo with Claude Code + Codex CLI pair-programming. Design decisions, architecture, and trade-offs are mine; code execution is paired. See `docs/v3-frontier-plan.md` for the plan and `docs/v2-plan-opus-review.md` for the independent review that drove this revision."
+5. **Honest README sentence** at the top: link to `docs/v3-frontier-plan.md` for the plan and `docs/v2-plan-opus-review.md` for the independent review that drove this revision.
 
 ## Locked decisions (do not revisit)
 

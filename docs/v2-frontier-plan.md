@@ -6,7 +6,7 @@
 
 - **Author**: Fei, ML Engineer (7+ years data infrastructure, bridging pipelines to production ML).
 - **Goal**: land NL AI Engineer / GenAI Engineer / ML Engineer role. NL hire peak season starts ~September 2026 (~16 weeks from now).
-- **Working mode**: solo developer, pair-programming with Claude Code (Opus 4.7) + Codex CLI. No external coordination.
+- **Working mode**: solo developer. No external coordination.
 - **Time budget**: 80-100h wall-clock over 12-16 weeks. Track A (job hunt) takes 60% of time; this project is Track B (P1).
 - **Decision**: this is the LAST portfolio project. No new ones after. All future signature work goes into this repo.
 
@@ -163,7 +163,7 @@ Each technique: solo-implementable, defensible in interview, tied to recognized 
 
 ## Total time estimate
 
-| Block | Wall-clock | With Codex pair (~0.6x) |
+| Block | Wall-clock | Adjusted (~0.6x) |
 |---|---|---|
 | Foundation | 52h | 31h |
 | Frontier (all 8) | 85-107h | 51-64h |
@@ -245,7 +245,7 @@ A flagship cross-source AI agent with 8 frontier techniques wired in:
 ## Open questions for Opus review
 
 1. **Is the 8-technique frontier list genuinely frontier or hype-laden?** Specifically: are any of these past peak relevance or about to be?
-2. **Are time estimates realistic with Codex pair-programming?** Specifically Frontier #1 (DSPy) — is 15-20h enough to learn + integrate + tune, or is this 40h disguised?
+2. **Are the time estimates realistic?** Specifically Frontier #1 (DSPy) — is 15-20h enough to learn + integrate + tune, or is this 40h disguised?
 3. **Sequencing**: should DSPy go before or after Self-Refine? They interact (DSPy can compile the critique prompt).
 4. **What's missing that would actually be more impactful?** Specifically things like:
    - Continuous online eval (production-style A/B)

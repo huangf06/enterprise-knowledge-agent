@@ -11,7 +11,7 @@
 
 - **Blocker (1)**: 根 URL `https://enterprise-knowledge-agent.fly.dev/` 返回 `{"detail":"Not Found"}` 404。LinkedIn / 简历点进来第一眼就是 JSON 404, 即使 API 本体没问题, 给非技术 recruiter 的观感是"挂了"。
 - **Should-fix (3)**: (1) 仓库根没有 `LICENSE` 文件 (只有 `pyproject.toml` 里的 `license = "Apache-2.0"` metadata); (2) `docs/demo-script.md` 和当前 live deploy 漂移严重 (Gradio UI 在线上根本没暴露, 假数字 `$0.018 / 47s` 跟 leaderboard 的 `$0.0036 / 150s` 冲突); (3) `docs/eval-methodology.md` line 11 还在说 "HotpotQA F1 of 0.077", README 已经是 0.29, 同站不同数。
-- **Nice-to-have (4)**: README hero 段缺一个"无真实客户数据"的 disclaimer 在第一屏; Quickstart 在新 clone 上 `docker compose up` 会因为 `data/synthetic/` 是 gitignored 而启动失败; Codex CLI pair-programming 的 attribution 只在 `docs/index.md` 露面, README 看不到; `docs/a3_semantic_cache.md` 留了三个 `TBD` 格子在公开 nav 路径外, 但是 site/ 已 build 进去, 会被搜索引擎索引。
+- **Nice-to-have (3)**: README hero 段缺一个"无真实客户数据"的 disclaimer 在第一屏; Quickstart 在新 clone 上 `docker compose up` 会因为 `data/synthetic/` 是 gitignored 而启动失败; `docs/a3_semantic_cache.md` 留了三个 `TBD` 格子在公开 nav 路径外, 但是 site/ 已 build 进去, 会被搜索引擎索引。
 
 差异化卖点 (cross-source policy + honest ablation + multi-judge consensus) 站得住脚。Self-Refine -0.08 / DSPy Goodhart / MoE Pareto / Counterfactual governance-held 这四张表都是真材实料, 不是 cherry-pick。
 
@@ -94,7 +94,7 @@
 | F1 | `governance_compliance = 1.0` 五类全过, README + 表里都是 1.00。**hiring manager 会问 "你怎么知道 governance layer 没有覆盖盲区?"**。当前回答只在 w5_report.md / adversarial.json 里, README 没单独点出"失败案例 / 不覆盖范围"。 | should-fix | README leaderboard 表下面加一行: "Governance is perfect on this 30-scenario set + 10 adversarial vectors. The blind spot we know about: federation across real Slack workspace / Jira project / GitHub org permission models is **NOT** in scope; this is a *pattern demo* on synthetic identity. Real federation is v1.5 (see `docs/governance-design.md` first paragraph)."。这种"知道自己不知道什么"的话术比辩护更有信号。 |
 | F2 | n=30 LLM-judge 的可信度: `docs/eval-methodology.md` 已经 head-on 处理 closed-loop (single-author calibration only), 列了 4 个 mitigation。**做得对**。但: (a) eval-methodology.md 是 "blog draft" 状态; (b) line 11 的 HotpotQA F1 0.077 数字 stale (见 B6); (c) "External reviewer slot" 那条 "If we can't get that pre-launch, the README declares 'single-author calibration only'" — 现在 README 在 leaderboard 段 line 17 写了 "LLM-judge with single-author calibration" 一句, 完成了这个 commitment。 | nice-to-have | eval-methodology.md 改成正式 doc (去掉 "blog draft" 标记); 修 line 11 数字; 在头部加一行 "Status: calibrated, single-author scope。 External reviewer review is v1.5 scope."。 |
 | F3 | "No real customer data, no PII, synthetic identity" disclaimer 没有显式出现在 README 第一屏。`docs/governance-design.md` 第一段写了 "pattern demo on synthetic identity, not Okta/Azure AD"。README "Differentiation" 第一 bullet 也说 "*pattern demo* on synthetic identity"。但**缺一行最顶上的合规免责**, 例如靠近 leaderboard 表上方。 | should-fix | README hero 区 (line 5-7) 加一行: "All data is synthetic and byte-deterministic from `seed=42` — no real customer data, no PII。 Governance is a pattern demo over synthetic identity, not Okta/Azure AD federation。"。一行解决三个问题 (PII / 合规 / scope)。 |
-| F4 | License: `pyproject.toml` declares Apache-2.0, root 无 `LICENSE` 文件 (见 D6)。Attribution: `docs/index.md` line 33 有 "built solo with Claude Code + Codex CLI pair-programming; design decisions, architecture, and trade-offs are mine, code execution is paired"。**这条做得非常好** (NL 文化非常看重诚实标注 AI assist), 但 **README 没有同样的话**, 只有 docs index 有。hiring manager 不一定点进 GH Pages, 大概率只看 GitHub README。 | **should-fix** | README 末尾或 "Differentiation" 段下方加一段 "Attribution" / "Build process" 块, 复用 `docs/index.md` line 33 那一行原文。透明度是 portfolio 的资产。 |
+| F4 | License: `pyproject.toml` declares Apache-2.0, root 无 `LICENSE` 文件 (见 D6)。 | **should-fix** | 仓库根加一个 `LICENSE` 文件 (Apache-2.0)。1 行 curl + 1 commit。 |
 
 ---
 
@@ -108,7 +108,6 @@
 - [ ] **P1** README hero 区加 synthetic-data + scope disclaimer 一行 (F3)。
 - [ ] **P1** README "Differentiation" 段加第 4 条 bullet "multi-judge consensus + Goodhart-aware" (E4)。
 - [ ] **P1** README leaderboard 表 DSPy 行 Verdict 改成 "+0.05 (2-judge) → -0.03 (3-judge), Goodhart reversal" (C6)。
-- [ ] **P1** README 底部加一段 "Built with Claude Code + Codex CLI pair-programming" attribution (F4)。
 - [ ] **P1** README leaderboard 下加一行 "governance 1.00 on this set; federation is v1.5 scope" (F1)。
 - [ ] **P1** 重录 / 重写 `docs/demo-script.md`, 对齐 live deploy (SSE 而非 Gradio, 真实 timing / cost, 当前 HEAD hash)。最贵但 ROI 最高: 这是 portfolio 的"动作戏"。
 - [ ] **P1** Quickstart 加一行 "generate synthetic data before docker compose up" (D3)。

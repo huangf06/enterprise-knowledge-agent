@@ -150,11 +150,9 @@ Full architecture diagram, module reuse table, and the Demo 2 modularity case st
 - `scripts/` — CLIs (generate, run_eval, run_adversarial, gates)
 - `.github/workflows/` — CI test + eval-gate + eval-nightly
 
-## Build process and attribution
+## Honesty calibration
 
-This project is built solo, with Claude Code + Codex CLI pair-programming. Design decisions, architecture, eval methodology, and ablation interpretation are mine; code execution and routine refactoring are paired with the LLM tools above. Every commit lands under my GitHub account with that workflow declared up-front rather than retrofitted.
-
-The "Three honest negatives" framing (Self-Refine, DSPy under 3-judge, and the Sonnet-MoE-lift-is-within-noise observation) came from running the experiments and publishing the tables as they fell — not from cherry-picking the runs that flattered the techniques. Multi-judge consensus + judge-pool isolation (v4.1 N1+P15) is what made the Goodhart reversal in the DSPy ablation visible at all.
+The "Three honest negatives" framing (Self-Refine, DSPy under 3-judge, and the Sonnet-MoE-lift-is-within-noise observation) came from running the experiments and publishing the tables as they fell, not from cherry-picking the runs that flattered the techniques. Multi-judge consensus + judge-pool isolation (v4.1 N1+P15) is what made the Goodhart reversal in the DSPy ablation visible at all.
 
 ## License
 

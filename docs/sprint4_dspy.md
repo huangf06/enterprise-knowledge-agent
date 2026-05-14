@@ -21,7 +21,7 @@ uv run python scripts/dspy_compile.py --iterations 50 \
 Per v4.1 locked decisions:
 - **P1**: gate at week-9 day-2. If not converging by then, fall back to manual prompt iteration.
 - **P2**: only `synthesize` for the first compilation pass. `plan` is the next target if buffer remains.
-- **P4**: budget cap $50-150 for compilation. Monitor live spend on console.anthropic.com.
+- **P4**: budget cap $50-150 for compilation. Monitor live spend on the vendor dashboard.
 
 ## Why we don't auto-run
 

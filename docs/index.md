@@ -30,4 +30,4 @@ Every frontier technique ships with a with-vs-without table.
 
 ## Honesty calibration
 
-Per v4.1 plan section *Honesty calibration policy*, every published leaderboard number ships with a "with vs without" ablation. The project is built solo with Claude Code + Codex CLI pair-programming; design decisions, architecture, and trade-offs are mine, code execution is paired.
+Per v4.1 plan section *Honesty calibration policy*, every published leaderboard number ships with a "with vs without" ablation.
